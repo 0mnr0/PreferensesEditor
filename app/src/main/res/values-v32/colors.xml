@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="Material0">@color/material_dynamic_neutral_variant0</color>
+    <color name="Material10">@color/material_dynamic_neutral_variant10</color>
+    <color name="Material20">@color/material_dynamic_neutral_variant20</color>
+    <color name="Material30">@color/material_dynamic_neutral_variant30</color>
+    <color name="Material40">@color/material_dynamic_neutral_variant40</color>
+    <color name="Material50">@color/material_dynamic_neutral_variant50</color>
+    <color name="Material60">@color/material_dynamic_neutral_variant60</color>
+    <color name="Material70">@color/material_dynamic_neutral_variant70</color>
+    <color name="Material80">@color/material_dynamic_neutral_variant80</color>
+    <color name="Material90">@color/material_dynamic_neutral_variant90</color>
+
+
+    <color name="MaterialAdditional0">@color/material_dynamic_primary0</color>
+    <color name="MaterialAdditional10">@color/material_dynamic_primary10</color>
+    <color name="MaterialAdditional20">@color/material_dynamic_primary20</color>
+    <color name="MaterialAdditional30">@color/material_dynamic_primary30</color>
+    <color name="MaterialAdditional40">@color/material_dynamic_primary40</color>
+    <color name="MaterialAdditional50">@color/material_dynamic_primary50</color>
+    <color name="MaterialAdditional60">@color/material_dynamic_primary60</color>
+    <color name="MaterialAdditional70">@color/material_dynamic_primary70</color>
+    <color name="MaterialAdditional80">@color/material_dynamic_primary80</color>
+    <color name="MaterialAdditional90">@color/material_dynamic_primary90</color>
+
+</resources>

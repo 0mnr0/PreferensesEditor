@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/alls"
+        android:enabled="true"
+        android:icon="@drawable/all"
+        android:title="All Types" />
+    <item
+        android:id="@+id/bools"
+        android:enabled="true"
+        android:title="@string/BoolType"
+        android:icon="@drawable/checkbox"/>
+    <item
+        android:id="@+id/ints"
+        android:enabled="true"
+        android:title="@string/IntType"
+        android:icon="@drawable/ints"/>
+    <item
+        android:id="@+id/strings_types"
+        android:enabled="true"
+        android:title="@string/StringType"
+        android:icon="@drawable/string"/>
+    <item
+        android:id="@+id/others"
+        android:enabled="true"
+        android:icon="@drawable/unknown"
+        android:title="@string/OtherType"
+        android:visible="false" />
+</menu>

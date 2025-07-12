@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppMainActivityTitle">Список приложений</string>
+    <string name="TooLargeContent">Может потребоваться время чтобы отобразить все настройки. В этом файле крайне много символов для отображения.</string>
+</resources>

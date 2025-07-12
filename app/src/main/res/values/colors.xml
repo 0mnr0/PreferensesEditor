@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="Material0">#000000</color>
+    <color name="Material10">#191B23</color>
+    <color name="Material20">#3E4253</color>
+    <color name="Material30">#44464F</color>
+    <color name="Material40">#5C5E67</color>
+    <color name="Material50">#757780</color>
+    <color name="Material60">#8F9099</color>
+    <color name="Material70">#A9ABB4</color>
+    <color name="Material80">#C5C6D0</color>
+    <color name="Material90">#E1E2EC</color>
+
+    <color name="MaterialAdditional0">#000000</color>
+    <color name="MaterialAdditional10">#001945</color>
+    <color name="MaterialAdditional20">#152E60</color>
+    <color name="MaterialAdditional30">#2F4578</color>
+    <color name="MaterialAdditional40">#475D92</color>
+    <color name="MaterialAdditional50">#6076AC</color>
+    <color name="MaterialAdditional60">#7A90C8</color>
+    <color name="MaterialAdditional70">#94AAE4</color>
+    <color name="MaterialAdditional80">#B0C6FF</color>
+    <color name="MaterialAdditional90">#D9E2FF</color>
+</resources>

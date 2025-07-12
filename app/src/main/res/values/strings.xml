@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name" translatable="false">SharedPrefs Edtior</string>
+    <string name="AppMainActivityTitle">App List</string>
+    <string name="BoolType" translatable="false">Boolean</string>
+    <string name="StringType" translatable="false">String</string>
+    <string name="IntType" translatable="false">Numerical</string>
+    <string name="OtherType" translatable="false">Other Types</string>
+    <string name="TooLargeContent">It may take a while to display all the settings. There are a lot of characters to display in this file.</string>
+</resources>
