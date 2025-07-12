@@ -3,6 +3,8 @@ package com.dsvl0.preferenseseditor;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import java.util.List;
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder> {
 
     private final List<SettingItem> settings;
+    boolean isEditTextLoading = false;
 
     public SettingsAdapter(List<SettingItem> settings) {
         this.settings = settings;
@@ -39,6 +42,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
     // Метод для безопасной установки большого текста
     public void insertTextChunked(EditText editText, String fullText) {
+        isEditTextLoading = true;
+        editText.setEnabled(false);
         Handler handler = new Handler(Looper.getMainLooper());
         int chunkSize = 500;
         if (fullText.length() > 10000) {
@@ -65,6 +70,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                     index[0] = end;
 
                     handler.postDelayed(this, delay); // следующее добавление
+                } else {
+                    isEditTextLoading = false;
+                    editText.setEnabled(true);
                 }
             }
         };
@@ -78,6 +86,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     public void onBindViewHolder(@NonNull SettingsViewHolder holder, int position) {
         SettingItem item = settings.get(position);
         holder.VarType.setText(item.settingType);
+        Object originalValue; originalValue = item.value;
+
 
 
         // Сначала скрываем оба блока
@@ -97,6 +107,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 checked = Boolean.parseBoolean((String) item.value);
             }
             holder.materialSwitch.setChecked(checked);
+            holder.materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                holder.ChangesLayout.setVisibility((isChecked != (Boolean) item.value) ? View.VISIBLE : View.GONE);
+            });
 
         } else if ("string".equalsIgnoreCase(item.settingType)) {
             holder.stringLayout.setVisibility(View.VISIBLE);
@@ -104,8 +117,23 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             Log.d("item.settingName", "item.settingName (" + item.settingName + "): "+item.value.toString().length());
             String textValue = item.value != null ? item.value.toString() : "";
             holder.textInputLayout.setHintAnimationEnabled(false);
-
             insertTextChunked(holder.textInputEditText, textValue);
+            holder.textInputEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (isEditTextLoading) { return; }
+                    String newValue = s.toString();
+                    holder.ChangesLayout.setVisibility((!newValue.equals(originalValue)) ? View.VISIBLE : View.GONE);
+                }
+            });
+
+
 
         } else if ("int".equalsIgnoreCase(item.settingType) || "float".equalsIgnoreCase(item.settingType) || "long".equalsIgnoreCase(item.settingType)) {
             holder.stringLayout.setVisibility(View.GONE);
@@ -116,6 +144,32 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 textValue = item.value.toString();
             }
             holder.textInputEditInt.setText(textValue);
+            holder.textInputEditInt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (isEditTextLoading) { return; }
+                    boolean isChangedFromOriginal = !s.toString().equals(originalValue.toString());
+                    String Type = item.settingType;
+                    switch (item.settingType) {
+                        case "int":
+                            item.value = Integer.parseInt(s.toString());
+                            break;
+                        case "float":
+                            item.value = Float.parseFloat(s.toString());
+                            break;
+                        case "long":
+                            item.value = Long.parseLong(s.toString());
+                            break;
+                    }
+                    holder.ChangesLayout.setVisibility(isChangedFromOriginal ? View.VISIBLE : View.GONE);
+                }
+            });
         }
 
         // Для других типов можно расширить логику
@@ -130,8 +184,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         TextView VarType;
         ConstraintLayout booleanLayout;
         MaterialSwitch materialSwitch;
-
-        ConstraintLayout stringLayout, intLayout;
+        ConstraintLayout stringLayout, intLayout, ChangesLayout;
         TextInputLayout textInputLayout, IntOutlinedTextField;
         TextInputEditText textInputEditText, textInputEditInt;
 
@@ -146,6 +199,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             textInputEditText = itemView.findViewById(R.id.settings_edit_text);
             IntOutlinedTextField = itemView.findViewById(R.id.IntOutlinedTextField);
             textInputEditInt = itemView.findViewById(R.id.settings_edit_int);
+            ChangesLayout = itemView.findViewById(R.id.ApplyOrDeny);
             VarType = itemView.findViewById(R.id.VarType);
         }
     }
