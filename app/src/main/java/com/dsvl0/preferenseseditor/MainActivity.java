@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void ShowLoadingProgress(Boolean state) {
-        ConstraintLayout LoadingElement = findViewById(R.id.Loader);
+        View LoadingElement = findViewById(R.id.LoadindIndicatorMain);
         LoadingElement.setVisibility(state ? ConstraintLayout.VISIBLE : ConstraintLayout.GONE);
     }
 

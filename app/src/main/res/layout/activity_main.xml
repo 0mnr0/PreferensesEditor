@@ -9,6 +9,18 @@
     android:background="@color/Material20"
     tools:context=".MainActivity">
 
+    <com.google.android.material.loadingindicator.LoadingIndicator
+        android:id="@+id/LoadindIndicatorMain"
+        style="@style/Widget.Material3.LoadingIndicator.Contained"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/MainContent"
         android:layout_width="match_parent"
@@ -37,27 +49,6 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/Loader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        android:background="#57000000"
-        android:visibility="gone">
-
-        <com.google.android.material.loadingindicator.LoadingIndicator
-            style="@style/Widget.Material3.LoadingIndicator.Contained"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.cardview.widget.CardView
         android:id="@+id/AnimationElement"
         android:layout_width="100dp"
@@ -70,7 +61,6 @@
         android:visibility="gone"
         app:cardCornerRadius="1000dp"
         app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="@+id/Loader"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
