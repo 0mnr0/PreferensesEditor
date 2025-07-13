@@ -154,7 +154,7 @@ public class Editor extends AppCompatActivity {
                 parsedSettings = SharedPrefsParser.parseSharedPrefsXml(content);
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Failed to decode file", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to decode file :/", Toast.LENGTH_SHORT).show();
                     Log.w("DecodeFileFailed", e);
                     SwitchTopElement(false);
                     ShowLoadingIndicator(false);

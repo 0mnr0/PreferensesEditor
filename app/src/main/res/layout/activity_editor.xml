@@ -113,7 +113,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -164,7 +165,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
+            android:ellipsize="end"
             android:padding="6dp"
+            android:singleLine="true"
             android:text="AppName"
             android:textColor="@color/Material90"
             android:textSize="24sp"
@@ -177,9 +180,11 @@
             android:id="@+id/EditorAppPackage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:maxLines="1"
             android:paddingLeft="6dp"
             android:paddingBottom="4dp"
+            android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/Material80"
             app:layout_constraintEnd_toEndOf="parent"

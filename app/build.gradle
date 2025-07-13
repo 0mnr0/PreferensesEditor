@@ -36,6 +36,7 @@ dependencies {
     testImplementation libs.junit
 
     // Implement "material-components-android" from github
+    implementation libs.glide
     implementation 'com.google.android.material:material:1.14.0-alpha02'
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
