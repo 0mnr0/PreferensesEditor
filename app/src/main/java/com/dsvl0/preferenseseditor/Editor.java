@@ -40,7 +40,7 @@ import java.util.List;
 public class Editor extends AppCompatActivity {
     final float GUIDELINE_PERCENT_OPENED = 0.25f;
     final float GUIDELINE_PERCENT_CLOSED = 0.025f;
-    ArrayList<String> searchType;
+    ArrayList<String> searchType = new ArrayList<>();
     String packageName, appName;
     Bitmap appIcon;
     List<String> sharedPrefsFiles = new ArrayList<>();
@@ -50,11 +50,11 @@ public class Editor extends AppCompatActivity {
     ConstraintLayout PopupLayout;
     SettingsAdapter settingsAdapter;
     String fileName = null;
-    String fileContent = null;
     BottomNavigationView bottomNav;
     boolean SecondMenuOpened = false;
     ImageView appImg, blurImage;
     TextView EditorAppName, EditorAppPackage;
+    private volatile int refreshTaskId = 0;
 
     List<SharedPrefsParser.Setting> settings;
 
@@ -89,45 +89,84 @@ public class Editor extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void RefreshInAppSettings() {
-        if (settings == null) {return;}
-        // searchType = ["boolean", "string", "int", "float", "long", "set", "*"];
-        long symbolsCounter = 0;
-        List<SettingItem> data = new ArrayList<>();
-        for (SharedPrefsParser.Setting setting : settings) {
-            Log.d("searchType: ", String.valueOf(searchType));
-            if (searchType.contains(setting.type) || searchType.contains("*") || searchType.isEmpty()) {
-                if (setting.type.equals("string")){
-                    symbolsCounter+=setting.value.toString().length();
-                }
-                data.add(new SettingItem(setting.settingName, setting.type, setting.value));
-            }
+        if (settings == null) {
+            return;
         }
-        if (symbolsCounter > 3000) {
-            PopupLayout.setVisibility(View.VISIBLE);
-            PopupText.setText(getString(R.string.TooLargeContent) + " (" + symbolsCounter + ")" );
-        }
-        final int delay = symbolsCounter > 3000 ? 1000 : 0;
 
-        new Handler().postDelayed(() -> {
-            settingsAdapter = new SettingsAdapter(data);
-            WorkingList.setAdapter(settingsAdapter);
-            ShowLoadingIndicator(false);
-        }, delay);
+        // Показать индикатор загрузки только в режиме настроек
+        if (SecondMenuOpened) {
+            ShowLoadingIndicator(true);
+        }
+
+        final int currentTaskId = ++refreshTaskId; // Инкремент ID задачи
+
+        new Thread(() -> {
+            long symbolsCounter = 0;
+            List<SettingItem> data = new ArrayList<>();
+
+            // Фильтрация и подсчет в фоне
+            for (SharedPrefsParser.Setting setting : settings) {
+                if (searchType.contains(setting.type) ||
+                        searchType.contains("*") ||
+                        searchType.isEmpty()) {
+
+                    if ("string".equals(setting.type)) {
+                        symbolsCounter += setting.value.toString().length();
+                    }
+                    data.add(new SettingItem(setting.settingName, setting.type, setting.value));
+                }
+            }
+
+            final long finalSymbolsCounter = symbolsCounter;
+            final List<SettingItem> finalData = data;
+
+            runOnUiThread(() -> {
+                if (isDestroyed() || currentTaskId != refreshTaskId) {
+                    return;
+                }
+
+                // Обновление UI
+                if (finalSymbolsCounter > 3000) {
+                    PopupLayout.setVisibility(View.VISIBLE);
+                    PopupText.setText(getString(R.string.TooLargeContent) + " (" + finalSymbolsCounter + ")");
+                } else {
+                    PopupLayout.setVisibility(View.GONE);
+                }
+
+                settingsAdapter = new SettingsAdapter(finalData);
+                WorkingList.setAdapter(settingsAdapter);
+                ShowLoadingIndicator(false);
+            });
+        }).start();
     }
+
 
     public void ShowFilePreferences() {
         adapter.clearFiles();
         SwitchTopElement(true);
-        fileContent = SharedPrefsReader.readSharedPrefs(packageName, fileName);
+        ShowLoadingIndicator(true);
 
-        try {
-            settings = SharedPrefsParser.parseSharedPrefsXml(fileContent); } catch (Exception e) {
-            Toast.makeText(this, "Failed to decode file", Toast.LENGTH_SHORT).show();
-            SwitchTopElement(false);
-            return;
-        }
+        new Thread(() -> {
+            final String content = SharedPrefsReader.readSharedPrefs(packageName, fileName);
+            final List<SharedPrefsParser.Setting> parsedSettings;
 
-        RefreshInAppSettings();
+            try {
+                parsedSettings = SharedPrefsParser.parseSharedPrefsXml(content);
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Failed to decode file", Toast.LENGTH_SHORT).show();
+                    Log.w("DecodeFileFailed", e);
+                    SwitchTopElement(false);
+                    ShowLoadingIndicator(false);
+                });
+                return;
+            }
+
+            runOnUiThread(() -> {
+                settings = parsedSettings;
+                RefreshInAppSettings(); // Запустить обновление с новыми данными
+            });
+        }).start();
     }
 
     public void ShowLoadingIndicator(boolean show) {
@@ -168,8 +207,6 @@ public class Editor extends AppCompatActivity {
 
             appImg.animate()
                     .alpha(0f)
-                    .scaleX(2f)
-                    .scaleY(2f)
                     .setDuration(400)
                     .start();
 
@@ -195,8 +232,6 @@ public class Editor extends AppCompatActivity {
 
             appImg.animate()
                     .alpha(1f)
-                    .scaleX(1f)
-                    .scaleY(1f)
                     .setDuration(400)
                     .start();
             blurImage.animate()
@@ -286,24 +321,27 @@ public class Editor extends AppCompatActivity {
         CreateXmlAdapter();
         bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setOnItemSelectedListener(item -> {
-            searchType = new ArrayList<>();
+            ArrayList<String> newSearchType = new ArrayList<>();
             int id = item.getItemId();
             if (id == R.id.bools) {
-                searchType.add("boolean");
+                newSearchType.add("boolean");
             } else if (id == R.id.ints) {
-                searchType.add("int");
-                searchType.add("long");
-                searchType.add("float");
-                searchType.add("double");
+                newSearchType.add("int");
+                newSearchType.add("long");
+                newSearchType.add("float");
+                newSearchType.add("double");
             } else if (id == R.id.alls) {
-                searchType.add("*");
+                newSearchType.add("*");
             } else if (id == R.id.strings_types) {
-                searchType.add("string");
+                newSearchType.add("string");
             } else {
-                searchType.add("set");
+                newSearchType.add("set");
             }
             hideKeyboard(this);
-            RefreshInAppSettings();
+            if (searchType.equals(newSearchType)) {
+                searchType = newSearchType;
+                RefreshInAppSettings();
+            }
             return true;
         });
         bottomNav.setSelectedItemId(R.id.alls);

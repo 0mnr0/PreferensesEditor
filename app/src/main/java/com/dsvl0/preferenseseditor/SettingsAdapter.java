@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,53 +40,78 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         return new SettingsViewHolder(view);
     }
 
-
-
-    // Метод для безопасной установки большого текста
-    public void insertTextChunked(EditText editText, String fullText) {
-        isEditTextLoading = true;
-        editText.setEnabled(false);
-        Handler handler = new Handler(Looper.getMainLooper());
-        int chunkSize = 500;
-        if (fullText.length() > 10000) {
-            chunkSize = 3000;
+    private void insertTextChunked(SettingsViewHolder holder, String fullText) {
+        if (TextUtils.isEmpty(fullText)) {
+            holder.textInputEditText.setText("");
+            return;
         }
-        if (fullText.length() > 100000) {
-            chunkSize = 30000;
-        }
-        if (fullText.length() > 500000) {
-            chunkSize = 100000;
-        }
-        final int delay = 200; // миллисекунд
-        final int[] index = {0}; // текущее положение
 
-        int finalChunkSize = chunkSize;
-        Runnable inserter = new Runnable() {
+        final int length = fullText.length();
+        holder.isTextLoading = true;
+        holder.textInputEditText.setEnabled(false);
+
+        // Оптимизация для EditText
+        optimizeEditTextForLargeContent(holder.textInputEditText);
+
+        // Определение размера чанка в зависимости от длины
+        int chunkSize = calculateChunkSize(length);
+        final int delay = calculateDelay(length);
+
+        holder.textInputEditText.setText(""); // Начинаем с пустого поля
+
+        holder.insertRunnable = new Runnable() {
+            int index = 0;
+
             @Override
             public void run() {
-                if (index[0] < fullText.length()) {
-                    int end = Math.min(index[0] + finalChunkSize, fullText.length());
-                    String chunk = fullText.substring(index[0], end);
+                if (index >= length || holder.isCancelled) {
+                    holder.isTextLoading = false;
+                    holder.textInputEditText.setEnabled(true);
+                    return;
+                }
 
-                    editText.append(chunk);
-                    index[0] = end;
+                int end = Math.min(index + chunkSize, length);
+                holder.textInputEditText.append(fullText.substring(index, end));
+                index = end;
 
-                    handler.postDelayed(this, delay); // следующее добавление
+                if (index < length) {
+                    holder.textInputEditText.postDelayed(this, delay);
                 } else {
-                    isEditTextLoading = false;
-                    editText.setEnabled(true);
+                    holder.isTextLoading = false;
+                    holder.textInputEditText.setEnabled(true);
                 }
             }
         };
 
-        handler.post(inserter); // запускаем первую вставку
+        holder.textInputEditText.post(holder.insertRunnable);
     }
 
+
+    private int calculateChunkSize(int length) {
+        if (length <= 10_000) return length; // Вставляем сразу
+        if (length <= 50_000) return 5_000;
+        if (length <= 200_000) return 10_000;
+        if (length <= 500_000) return 20_000;
+        return 30_000; // Для текстов > 500k символов
+    }
+
+    private int calculateDelay(int length) {
+        if (length <= 100_000) return 0;   // Без задержки для средних текстов
+        if (length <= 500_000) return 20;  // 20ms
+        return 50;                          // 50ms для очень больших текстов
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull SettingsViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.cancelPendingInsert(); // Отмена операций при переиспользовании ViewHolder
+    }
 
 
     @Override
     public void onBindViewHolder(@NonNull SettingsViewHolder holder, int position) {
         SettingItem item = settings.get(position);
+        holder.resetState();
         holder.VarType.setText(item.settingType);
         Object originalValue; originalValue = item.value;
 
@@ -98,7 +125,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         if ("boolean".equalsIgnoreCase(item.settingType)) {
             holder.booleanLayout.setVisibility(View.VISIBLE);
             holder.materialSwitch.setText(item.settingName);
-
 
             boolean checked = false;
             if (item.value instanceof Boolean) {
@@ -117,7 +143,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             Log.d("item.settingName", "item.settingName (" + item.settingName + "): "+item.value.toString().length());
             String textValue = item.value != null ? item.value.toString() : "";
             holder.textInputLayout.setHintAnimationEnabled(false);
-            insertTextChunked(holder.textInputEditText, textValue);
+            insertTextChunked(holder, textValue);
+            optimizeEditTextForLargeContent(holder.textInputEditText);
             holder.textInputEditText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -179,8 +206,31 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     public int getItemCount() {
         return settings.size();
     }
+    private void optimizeEditTextForLargeContent(EditText editText) {
+        editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        editText.setHorizontallyScrolling(true);
+        editText.setMovementMethod(null);
+        editText.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+        editText.setScrollContainer(true);
+    }
 
     static class SettingsViewHolder extends RecyclerView.ViewHolder {
+        boolean isTextLoading = false;
+        boolean isCancelled = false;
+        Runnable insertRunnable;
+
+        public void resetState() {
+            isTextLoading = false;
+            isCancelled = false;
+        }
+        public void cancelPendingInsert() {
+            isCancelled = true;
+            if (insertRunnable != null && textInputEditText != null) {
+                textInputEditText.removeCallbacks(insertRunnable);
+            }
+        }
+
+
         TextView VarType;
         ConstraintLayout booleanLayout;
         MaterialSwitch materialSwitch;
