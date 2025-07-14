@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
@@ -55,7 +56,7 @@ public class Editor extends AppCompatActivity {
     ImageView appImg, blurImage;
     TextView EditorAppName, EditorAppPackage;
     private volatile int refreshTaskId = 0;
-
+    ImageView EditFullFile;
     List<SharedPrefsParser.Setting> settings;
 
 
@@ -179,6 +180,7 @@ public class Editor extends AppCompatActivity {
         Guideline line = findViewById(R.id.guideline2);
         ValueAnimator animator;
         ShowLoadingIndicator(blurred);
+        EditFullFile.setVisibility(blurred ? View.VISIBLE : View.GONE);
         if (blurred) {
             WorkingList.setAdapter(null);
             EditorAppPackage.setText(fileName);
@@ -298,7 +300,15 @@ public class Editor extends AppCompatActivity {
         PopupLayout = findViewById(R.id.PopupLayout);
         PopupText = findViewById(R.id.PopupText);
         findViewById(R.id.ClosePopupImage).setOnClickListener(v -> PopupLayout.setVisibility(View.GONE));
-
+        EditFullFile = findViewById(R.id.EditFullFile);
+        EditFullFile.setVisibility(View.GONE);
+        EditFullFile.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FullFileEditor.class);
+            intent.putExtra("packageName", packageName);
+            intent.putExtra("appName", appName);
+            intent.putExtra("workingFile", fileName);
+            startActivity(intent);
+        });
 
         //Get Extra from this activity
         packageName = getIntent().getStringExtra("packageName");
