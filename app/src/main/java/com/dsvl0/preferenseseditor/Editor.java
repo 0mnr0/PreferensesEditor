@@ -338,7 +338,7 @@ public class Editor extends AppCompatActivity {
                 newSearchType.add("set");
             }
             hideKeyboard(this);
-            if (searchType.equals(newSearchType)) {
+            if (!searchType.equals(newSearchType)) {
                 searchType = newSearchType;
                 RefreshInAppSettings();
             }
