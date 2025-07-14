@@ -15,8 +15,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -29,8 +31,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView appList;
     ConstraintLayout MainContent;
     boolean isAnimating = false;
+    boolean isRefreshing = false;
+    SearchView searchView;
+    String PackageFilter = "";
+
+    AppCardAdapter adapter = new AppCardAdapter(this);
 
 
 
@@ -74,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         // 1 - All Packages (User + System)
         // 2 - Only System
         // 3 - Only User
-
         List<SystemAppInfo> result = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
@@ -103,14 +111,19 @@ public class MainActivity extends AppCompatActivity {
     public void ShowLoadingProgress(Boolean state) {
         View LoadingElement = findViewById(R.id.LoadindIndicatorMain);
         LoadingElement.setVisibility(state ? ConstraintLayout.VISIBLE : ConstraintLayout.GONE);
+        searchView.setEnabled(!state);
     }
 
     private void BuildAppList() {
-        AppCardAdapter adapter = new AppCardAdapter(this);
+
+        adapter.clearApps();
         appList.setAdapter(adapter);
         appList.setLayoutManager(new LinearLayoutManager(this));
 
         for (SystemAppInfo app : apps) {
+            if (!app.getName().contains(PackageFilter)) {
+                continue;
+            }
             adapter.addApp(app);
         }
 
@@ -176,16 +189,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
 
+                searchView.clearFocus();
                 isAnimating = false;
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }, 350);
         });
-
-
-
-
-
-
     }
 
 
@@ -199,21 +207,58 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.ConstraintLayout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
         appList = findViewById(R.id.appList);
-        MainContent = findViewById(R.id.MainContent);
-
+        MainContent = findViewById(R.id.ConstraintLayout);
+        searchView = findViewById(R.id.search_view);
         ShowLoadingProgress(true);
         new Handler().postDelayed(() -> executor.execute(() -> {
+            isRefreshing = true;
             List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, 3);
             runOnUiThread(() -> {
                 apps = fetchedApps;
                 BuildAppList();
                 ShowLoadingProgress(false);
+                isRefreshing = false;
             });
         }), 0);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                PackageFilter = newText;
+                BuildAppList();
+                return false;
+            }
+        });
+
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (isRefreshing) {swipeRefreshLayout.setRefreshing(false); return;}
+            isRefreshing = true;
+            adapter.clearApps();
+            ShowLoadingProgress(true);
+            swipeRefreshLayout.setRefreshing(false);
+            executor.execute(() -> {
+                List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, 3);
+                runOnUiThread(() -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    apps = fetchedApps;
+                    BuildAppList();
+                    ShowLoadingProgress(false);
+                    isRefreshing = false;
+                }, 100));
+            });
+        });
+
+
         AnimationElement = findViewById(R.id.AnimationElement);
     }
 
@@ -225,6 +270,16 @@ public class MainActivity extends AppCompatActivity {
             lastY = ev.getY();
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    // on back pressed
+    public void onBackPressed() {
+        if (searchView.hasFocus()) {
+            searchView.clearFocus();
+        } else {
+            super.onBackPressed();
+        }
     }
 
 
