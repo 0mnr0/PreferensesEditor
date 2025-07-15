@@ -11,8 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -22,6 +26,8 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder> {
@@ -53,7 +59,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         // Оптимизация для EditText
         optimizeEditTextForLargeContent(holder.textInputEditText);
 
-        // Определение размера чанка в зависимости от длины
         int chunkSize = calculateChunkSize(length);
         final int delay = calculateDelay(length);
 
@@ -79,6 +84,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 } else {
                     holder.isTextLoading = false;
                     holder.textInputEditText.setEnabled(true);
+                    holder.textInputEditText.clearFocus();
                 }
             }
         };
@@ -120,6 +126,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         // Сначала скрываем оба блока
         holder.booleanLayout.setVisibility(View.GONE);
         holder.stringLayout.setVisibility(View.GONE);
+        holder.setLayout.setVisibility(View.GONE);
         holder.intLayout.setVisibility(View.GONE);
 
         if ("boolean".equalsIgnoreCase(item.settingType)) {
@@ -182,7 +189,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 public void afterTextChanged(Editable s) {
                     if (isEditTextLoading) { return; }
                     boolean isChangedFromOriginal = !s.toString().equals(originalValue.toString());
-                    String Type = item.settingType;
                     switch (item.settingType) {
                         case "int":
                             item.value = Integer.parseInt(s.toString());
@@ -197,9 +203,42 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                     holder.ChangesLayout.setVisibility(isChangedFromOriginal ? View.VISIBLE : View.GONE);
                 }
             });
-        }
+        } else if ("set".equalsIgnoreCase(item.settingType)) {
+            holder.setLayout.setVisibility(View.VISIBLE);
+            final HashSet finalValue = (HashSet) item.value;
 
-        // Для других типов можно расширить логику
+            Log.d("SetDebugger", String.valueOf(finalValue));
+            LayoutInflater inflater = LayoutInflater.from(holder.setList.getContext());
+            holder.CreateNewSetElement.setOnClickListener(v -> {
+                holder.HashSize += 1;
+                AddSetToList(inflater, holder, "", holder.HashSize);
+            });
+
+
+            for (int i = 0; i < finalValue.size(); i++) {
+                AddSetToList(inflater, holder, finalValue.toArray()[i].toString(), i);
+                holder.HashSize = i;
+                Log.d("SetHashSize", String.valueOf(holder.HashSize));
+            }
+        }
+    }
+
+    private void AddSetToList(LayoutInflater inflater, SettingsViewHolder holder, String finalValue, int i) {
+        View SetManipulator = inflater.inflate(R.layout.set_manipulator, holder.setList, false);
+
+        EditText editText = SetManipulator.findViewById(R.id.editText);
+        ImageView DeleteAction = SetManipulator.findViewById(R.id.deleteAction);
+        editText.setHint((finalValue.isEmpty()) ? "Новое значение: " : finalValue);
+        editText.setText((finalValue.isEmpty()) ? "" : finalValue);
+
+        DeleteAction.setOnClickListener(v -> {
+            holder.setList.removeView(SetManipulator);
+            holder.HashSize -= 1;
+            //String text = editText.getText().toString();
+            //Toast.makeText(button.getContext(), "Введено: " + text, Toast.LENGTH_SHORT).show();
+        });
+
+        holder.setList.addView(SetManipulator);
     }
 
     @Override
@@ -234,23 +273,28 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         TextView VarType;
         ConstraintLayout booleanLayout;
         MaterialSwitch materialSwitch;
-        ConstraintLayout stringLayout, intLayout, ChangesLayout;
+        ConstraintLayout stringLayout, intLayout, ChangesLayout, setLayout;
         TextInputLayout textInputLayout, IntOutlinedTextField;
         TextInputEditText textInputEditText, textInputEditInt;
+        LinearLayout setList;
+        Button CreateNewSetElement;
+        int HashSize = 0;
 
         @SuppressLint("CutPasteId")
         public SettingsViewHolder(@NonNull View itemView) {
             super(itemView);
             booleanLayout = itemView.findViewById(R.id.BooleanType);
             materialSwitch = itemView.findViewById(R.id.materialSwitch);
-
+            setList = itemView.findViewById(R.id.setList);
             stringLayout = itemView.findViewById(R.id.StringType); intLayout = itemView.findViewById(R.id.IntType);
             textInputLayout = itemView.findViewById(R.id.outlinedTextField);
             textInputEditText = itemView.findViewById(R.id.settings_edit_text);
             IntOutlinedTextField = itemView.findViewById(R.id.IntOutlinedTextField);
             textInputEditInt = itemView.findViewById(R.id.settings_edit_int);
             ChangesLayout = itemView.findViewById(R.id.ApplyOrDeny);
+            setLayout = itemView.findViewById(R.id.SetType);
             VarType = itemView.findViewById(R.id.VarType);
+            CreateNewSetElement = itemView.findViewById(R.id.CreateNewSetElement);
         }
     }
 }
