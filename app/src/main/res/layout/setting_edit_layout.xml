@@ -26,7 +26,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:elevation="1dp"
         android:padding="6dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -61,6 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/settingseditor"
+            tools:layout_editor_absoluteX="6dp"
             tools:layout_editor_absoluteY="54dp">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -83,7 +84,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/settings_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,7 +96,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/settingseditor"
-            tools:layout_editor_absoluteY="131dp">
+            app:layout_constraintTop_toBottomOf="@+id/StringType"
+            tools:layout_editor_absoluteX="6dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/IntOutlinedTextField"
@@ -117,12 +120,42 @@
                     android:id="@+id/settings_edit_int"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:scrollHorizontally="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/SetType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/settingseditor"
+            android:padding="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/IntType"
+            tools:layout_editor_absoluteX="6dp">
+
+            <LinearLayout
+                android:id="@+id/setList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="10dp">
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:text="Create New"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ApplyOrDeny"
@@ -133,7 +166,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toBottomOf="parent"
         tools:visibility="visible">
 
         <Button
@@ -155,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_end="214dp" />
 
         <Button
             android:id="@+id/deny"

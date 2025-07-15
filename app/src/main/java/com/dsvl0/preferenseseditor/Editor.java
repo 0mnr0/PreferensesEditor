@@ -10,7 +10,6 @@ import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -31,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
-import com.google.android.material.loadingindicator.LoadingIndicator;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -56,8 +55,9 @@ public class Editor extends AppCompatActivity {
     ImageView appImg, blurImage;
     TextView EditorAppName, EditorAppPackage;
     private volatile int refreshTaskId = 0;
-    ImageView EditFullFile;
     List<SharedPrefsParser.Setting> settings;
+    private FloatingActionButton fabMain, SaveFile, EditFullFile;
+    private boolean isFabMenuOpen = false;
 
 
 
@@ -148,11 +148,12 @@ public class Editor extends AppCompatActivity {
         ShowLoadingIndicator(true);
 
         new Thread(() -> {
-            final String content = SharedPrefsReader.readSharedPrefs(packageName, fileName);
+            final String content = SharedPrefsReader.readSharedPrefs(packageName, fileName); // Returning shared_preferences.xml file content like a String
             final List<SharedPrefsParser.Setting> parsedSettings;
 
             try {
                 parsedSettings = SharedPrefsParser.parseSharedPrefsXml(content);
+                Log.d("parsedSettings:", parsedSettings.toString());
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     Toast.makeText(this, "Failed to decode file :/", Toast.LENGTH_SHORT).show();
@@ -180,7 +181,8 @@ public class Editor extends AppCompatActivity {
         Guideline line = findViewById(R.id.guideline2);
         ValueAnimator animator;
         ShowLoadingIndicator(blurred);
-        EditFullFile.setVisibility(blurred ? View.VISIBLE : View.GONE);
+        toggleFabMenu(true);
+        hideFabMenu(!blurred);
         if (blurred) {
             WorkingList.setAdapter(null);
             EditorAppPackage.setText(fileName);
@@ -300,15 +302,6 @@ public class Editor extends AppCompatActivity {
         PopupLayout = findViewById(R.id.PopupLayout);
         PopupText = findViewById(R.id.PopupText);
         findViewById(R.id.ClosePopupImage).setOnClickListener(v -> PopupLayout.setVisibility(View.GONE));
-        EditFullFile = findViewById(R.id.EditFullFile);
-        EditFullFile.setVisibility(View.GONE);
-        EditFullFile.setOnClickListener(v -> {
-            Intent intent = new Intent(this, FullFileEditor.class);
-            intent.putExtra("packageName", packageName);
-            intent.putExtra("appName", appName);
-            intent.putExtra("workingFile", fileName);
-            startActivity(intent);
-        });
 
         //Get Extra from this activity
         packageName = getIntent().getStringExtra("packageName");
@@ -355,12 +348,61 @@ public class Editor extends AppCompatActivity {
             return true;
         });
         bottomNav.setSelectedItemId(R.id.alls);
+
+
+        fabMain = findViewById(R.id.fabMain);
+        EditFullFile = findViewById(R.id.EditFullFile);
+        SaveFile = findViewById(R.id.SaveFile);
+        fabMain.setOnClickListener(v -> toggleFabMenu(false));
+        hideFabMenu(true);
+
+        EditFullFile.hide();
+        EditFullFile.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FullFileEditor.class);
+            intent.putExtra("packageName", packageName);
+            intent.putExtra("appName", appName);
+            intent.putExtra("workingFile", fileName);
+            startActivity(intent);
+        });
+
+        SaveFile.setOnClickListener(v -> {
+            Toast.makeText(this, "Option 2 clicked", Toast.LENGTH_SHORT).show();
+        });
+
+    }
+
+
+    private void toggleFabMenu(boolean forceClose) {
+        final int time = (forceClose ? 0 : 200);
+        if (forceClose) {
+            isFabMenuOpen = true;
+        }
+        if (!forceClose) {
+            fabMain.animate().rotation(isFabMenuOpen ? 0f : 45f).setDuration(time).start();
+        } else {
+            fabMain.animate().rotation(0f).setDuration(time).start();
+        }
+        if (isFabMenuOpen) {
+            EditFullFile.hide();
+            SaveFile.hide();
+        } else {
+            EditFullFile.show();
+            SaveFile.show();
+        }
+        isFabMenuOpen = !isFabMenuOpen;
+    }
+
+    private void hideFabMenu(boolean status) {
+        if (status) {
+            fabMain.hide();
+        } else {
+            fabMain.show();
+        }
     }
 
 
 
-
-        @Override
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

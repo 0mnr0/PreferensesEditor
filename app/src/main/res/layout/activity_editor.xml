@@ -173,7 +173,7 @@
             android:textColor="@color/Material90"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/EditFullFile"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -189,23 +189,56 @@
             android:text="TextView"
             android:textColor="@color/Material80"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/EditorAppName" />
 
-        <ImageView
-            android:id="@+id/EditFullFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/editfullfile"
-            android:clickable="true"
-            android:padding="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/EditorAppName"
-            app:srcCompat="@drawable/edit_document" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        android:src="@drawable/utils"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Дополнительная кнопка 1 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/EditFullFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4dp"
+        android:scaleX="0.9"
+        android:scaleY="0.9"
+        android:src="@drawable/edit_document"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/SaveFile"
+        app:layout_constraintEnd_toEndOf="@+id/fabMain"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/SaveFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="14dp"
+        android:scaleX="0.9"
+        android:scaleY="0.9"
+        android:src="@drawable/save_icon"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fabMain"
+        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
+        tools:visibility="visible" />
+
+    <!-- Дополнительная кнопка 2 -->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
