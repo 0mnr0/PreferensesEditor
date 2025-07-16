@@ -40,6 +40,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Editor extends AppCompatActivity {
@@ -412,7 +413,7 @@ public class Editor extends AppCompatActivity {
                                 value = 0;
                                 break;
                             case "set":
-                                value = new ArrayList<String>();
+                                value = new HashSet<String>();
                                 break;
                         }
                         settingsAdapter.AddSetting(settingName.getText().toString(), selected, value);
