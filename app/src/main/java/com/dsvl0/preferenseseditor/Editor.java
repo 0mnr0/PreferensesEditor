@@ -3,7 +3,6 @@ package com.dsvl0.preferenseseditor;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
@@ -32,9 +32,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.BufferedReader;
@@ -100,7 +102,7 @@ public class Editor extends AppCompatActivity {
             return;
         }
 
-        // Показать индикатор загрузки только в режиме настроек
+
         if (SecondMenuOpened) {
             ShowLoadingIndicator(true);
         }
@@ -377,7 +379,7 @@ public class Editor extends AppCompatActivity {
             XmlCreator xmlCreator = new XmlCreator();
             for (SettingItem settingItem : settings) {
                 if (settingItem.value.getClass() == ArrayList.class) {
-                    settingItem.value = new HashSet<String>((ArrayList<String>) settingItem.value);
+                    settingItem.value = new HashSet<>((ArrayList<String>) settingItem.value);
                 }
                 Log.d("Save("+settingItem.settingName+")", String.valueOf(settingItem.value.getClass()));
                 xmlCreator.add(settingItem.settingName, settingItem.settingType, settingItem.value);
@@ -398,10 +400,11 @@ public class Editor extends AppCompatActivity {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, options);
             spinner.setAdapter(adapter);
 
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setView(dialogView)
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setView(dialogView)
                     .setCancelable(false)
-                    .setPositiveButton("Далее", (d, which) -> {
+                    .setPositiveButton("Далее", (dialog, which) -> {
                         String selected = spinner.getSelectedItem().toString().toLowerCase();
                         Object value = null;
                         switch (selected) {
@@ -422,15 +425,26 @@ public class Editor extends AppCompatActivity {
                         }
                         settingsAdapter.AddSetting(settingName.getText().toString(), selected, value);
                     })
-                    .setNegativeButton("Отмена", (d, which) -> {})
-                    .create();
+                    .setNegativeButton("Отмена", (dialog, which) -> {});
 
+            AlertDialog dialog = builder.create();
             dialog.show();
+
 
 
         });
 
-
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.listRefresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (SecondMenuOpened) {
+                ShowFilePreferences();
+            } else {
+                PopupLayout.setVisibility(View.GONE);
+                CreateXmlAdapter();
+            }
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
     }
 
