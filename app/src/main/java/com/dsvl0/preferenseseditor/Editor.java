@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -56,7 +57,7 @@ public class Editor extends AppCompatActivity {
     RecyclerView WorkingList;
     XmlFileAdapter adapter;
     TextView PopupText;
-    ConstraintLayout PopupLayout;
+    ConstraintLayout PopupLayout, main;
     SettingsAdapter settingsAdapter;
     String fileName = null;
     BottomNavigationView bottomNav;
@@ -307,6 +308,7 @@ public class Editor extends AppCompatActivity {
             v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         }); ShowLoadingIndicator(true);
+        main = findViewById(R.id.main);
         WorkingList = findViewById(R.id.SettingsList);
         PopupLayout = findViewById(R.id.PopupLayout);
         PopupText = findViewById(R.id.PopupText);
@@ -329,6 +331,13 @@ public class Editor extends AppCompatActivity {
 
         EditorAppName = findViewById(R.id.EditorAppName); EditorAppName.setText(appName);
         EditorAppPackage = findViewById(R.id.EditorAppPackage); EditorAppPackage.setText(packageName);
+        fabMain = findViewById(R.id.fabMain);
+        EditFullFile = findViewById(R.id.EditFullFile);
+        CreateNewSetting = findViewById(R.id.CreateNewSetting);
+        SaveFile = findViewById(R.id.SaveFile);
+        fabMain.setOnClickListener(v -> toggleFabMenu(false));
+        hideFabMenu(true);
+
 
         CreateXmlAdapter();
         bottomNav = findViewById(R.id.bottomNavigationView);
@@ -354,17 +363,14 @@ public class Editor extends AppCompatActivity {
                 searchType = newSearchType;
                 RefreshInAppSettings();
             }
+
+            if (isFabMenuOpen) toggleFabMenu(false);
             return true;
         });
         bottomNav.setSelectedItemId(R.id.alls);
 
 
-        fabMain = findViewById(R.id.fabMain);
-        EditFullFile = findViewById(R.id.EditFullFile);
-        CreateNewSetting = findViewById(R.id.CreateNewSetting);
-        SaveFile = findViewById(R.id.SaveFile);
-        fabMain.setOnClickListener(v -> toggleFabMenu(false));
-        hideFabMenu(true);
+
 
         EditFullFile.hide();
         EditFullFile.setOnClickListener(v -> {
@@ -449,7 +455,26 @@ public class Editor extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         });
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+                KeyBoardActions(isKeyboardVisible);
+                return insets;
+            });
+        }
     }
+
+
+    public void KeyBoardActions(boolean isKeyBoardOpened) {
+        if (isKeyBoardOpened) {
+            isFabMenuOpen = true;
+            toggleFabMenu(false);
+        }
+        bottomNav.setVisibility(isKeyBoardOpened ? View.GONE : View.VISIBLE);
+    }
+
+
 
 
     private void toggleFabMenu(boolean forceClose) {
@@ -490,14 +515,41 @@ public class Editor extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+
+    boolean WasSomethingFocused = false;
+    private void clearFocusFromAll(ViewGroup parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                clearFocusFromAll((ViewGroup) child);
+            } else {
+                if (child.hasFocus()) {WasSomethingFocused = true;}
+                child.clearFocus();
+            }
+        }
+    }
+
+
+
     @Override
     public void onBackPressed() {
+
+        if (!SecondMenuOpened) {
+            WasSomethingFocused = false;
+            clearFocusFromAll(main);
+            if (WasSomethingFocused) {
+                return;
+            }
+        }
+
         if (SecondMenuOpened) {
             SecondMenuOpened = false;
             SwitchTopElement(false);
             PopupLayout.setVisibility(View.GONE);
             return;
         }
+
+
 
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
