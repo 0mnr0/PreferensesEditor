@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -209,6 +210,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             holder.setLayout.setVisibility(View.VISIBLE);
             final HashSet finalValue = (HashSet) item.value;
             LayoutInflater inflater = LayoutInflater.from(holder.setList.getContext());
+            holder.PreferenceName.setText(item.settingName);
             holder.CreateNewSetElement.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.CreateNewSetElement.setOnClickListener(v -> {
                 AddSetToList(inflater, holder, "", item);
@@ -278,6 +280,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         editText.setText((finalValue.isEmpty()) ? "" : finalValue);
 
         final int CurrentElement = holder.SetList.size();
+
         holder.SetList.add(CurrentElement, editText.getText().toString());
 
         editText.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
@@ -299,12 +302,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
         DeleteAction.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
         DeleteAction.setOnClickListener(v -> {
-            final int CurrentReindexedElement = holder.setList.indexOfChild(SetManipulator) - 1;
+            final int CurrentReindexedElement = holder.setList.indexOfChild(SetManipulator) - 2; // -2 Потому что в layout есть дополнительный TextView и Button
+
             holder.setList.removeView(SetManipulator);
             holder.SetList.remove(CurrentReindexedElement);
             item.value = holder.SetList;
             settings.set(settings.indexOf(item), item);
         });
+
 
         holder.setList.addView(SetManipulator);
     }
@@ -338,14 +343,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         }
 
 
-        TextView VarType;
+        TextView VarType, PreferenceName;
         ConstraintLayout booleanLayout;
         MaterialSwitch materialSwitch;
         ConstraintLayout stringLayout, intLayout, setLayout;
         TextInputLayout textInputLayout, IntOutlinedTextField;
         TextInputEditText textInputEditText, textInputEditInt;
         LinearLayout setList;
-        Button CreateNewSetElement;
+        MaterialButton CreateNewSetElement;
         ArrayList<String> SetList = new ArrayList<>();
         ConstraintLayout MainLayout;
 
@@ -364,6 +369,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             setLayout = itemView.findViewById(R.id.SetType);
             VarType = itemView.findViewById(R.id.VarType);
             CreateNewSetElement = itemView.findViewById(R.id.CreateNewSetElement);
+            PreferenceName = itemView.findViewById(R.id.PreferenceName);
         }
     }
 

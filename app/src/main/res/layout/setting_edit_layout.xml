@@ -132,6 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/settingseditor"
+            android:backgroundTint="@null"
             android:padding="5dp"
             app:layout_constraintTop_toBottomOf="@+id/IntType"
             tools:layout_editor_absoluteX="6dp">
@@ -144,14 +145,32 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteX="10dp">
 
-                <Button
+                <TextView
+                    android:id="@+id/PreferenceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/set_preference_name"
+                    android:gravity="center"
+                    android:padding="1dp"
+                    android:text="Preference Name"
+                    android:textColor="@color/Material20"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/CreateNewSetElement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:text="Create New"
-                    app:cornerRadius="12dp" />
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/set_preference_button"
+                    android:minHeight="1dp"
+                    android:text="Create New" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
