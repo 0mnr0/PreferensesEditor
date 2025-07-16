@@ -471,7 +471,9 @@ public class Editor extends AppCompatActivity {
             isFabMenuOpen = true;
             toggleFabMenu(false);
         }
-        bottomNav.setVisibility(isKeyBoardOpened ? View.GONE : View.VISIBLE);
+        if (SecondMenuOpened) {
+            bottomNav.setVisibility((isKeyBoardOpened) ? View.GONE : View.VISIBLE);
+        } else {bottomNav.setVisibility(View.GONE);}
     }
 
 
