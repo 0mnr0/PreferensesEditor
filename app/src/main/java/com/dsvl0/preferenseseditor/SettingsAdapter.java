@@ -228,11 +228,15 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         Button Cancel = dialogView.findViewById(R.id.CancelVarAction);
 
 
-        if (type.equalsIgnoreCase("set") || type.equalsIgnoreCase("boolean")){ return; }
         String[] options = {"String", "Int", "Float", "Long"};
+        if (type.equalsIgnoreCase("set") || type.equalsIgnoreCase("boolean")){
+            options = new String[]{"Not Available for <" + type + ">"};
+            spinner.setEnabled(false);
+            spinner.setClickable(false);
+        }
+
         int index = 0;
         for (int i = 0; i < options.length; i++) { if (options[i].equalsIgnoreCase(type)){ index = i; } }
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
         spinner.setAdapter(adapter);
         spinner.setSelection(index);
@@ -287,13 +291,13 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             @SuppressLint("LongLogTag")
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d("CurrentElement (Editing): ", CurrentElement + " | " + s.toString());
                 holder.SetList.set(CurrentElement, s.toString());
                 item.value = holder.SetList;
                 settings.set(settings.indexOf(item), item);
             }
         });
 
+        DeleteAction.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
         DeleteAction.setOnClickListener(v -> {
             final int CurrentReindexedElement = holder.setList.indexOfChild(SetManipulator) - 1;
             holder.setList.removeView(SetManipulator);
