@@ -3,6 +3,7 @@ package com.dsvl0.preferenseseditor;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,9 +12,13 @@ import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -368,11 +373,56 @@ public class Editor extends AppCompatActivity {
 
         SaveFile.setOnClickListener(v -> {
             final List<SettingItem> settings = settingsAdapter.ExportData();
+            XmlCreator xmlCreator = new XmlCreator();
             for (SettingItem settingItem : settings) {
-                Log.d("ExportData", settingItem.settingName + " | " + settingItem.settingType + " | " + settingItem.value);
+                xmlCreator.add(settingItem.settingName, settingItem.settingType, settingItem.value);
             }
-            //settingsAdapter = new SettingsAdapter(this);
-            //settingsAdapter.saveAll();
+            String FinalXML = xmlCreator.getResult();
+
+            Log.v("FinalXML", FinalXML);
+            RootFile.save("/data/data/" + packageName + "/shared_prefs/" + fileName, FinalXML);
+        });
+
+        CreateNewSetting.setOnClickListener(v -> {
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View dialogView = inflater.inflate(R.layout.dialog_with_spinner, null);
+            Spinner spinner = dialogView.findViewById(R.id.dialogSpinner);
+            EditText settingName = dialogView.findViewById(R.id.NewSettingName);
+
+            String[] options = {"String", "Boolean" ,"Int", "Float", "Long", "Set"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, options);
+            spinner.setAdapter(adapter);
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .setPositiveButton("Далее", (d, which) -> {
+                        String selected = spinner.getSelectedItem().toString().toLowerCase();
+                        Object value = null;
+                        switch (selected) {
+                            case "string":
+                                value = "";
+                                break;
+                            case "boolean":
+                                value = false;
+                                break;
+                            case "integer":
+                            case "long":
+                            case "float":
+                                value = 0;
+                                break;
+                            case "set":
+                                value = new ArrayList<String>();
+                                break;
+                        }
+                        settingsAdapter.AddSetting(settingName.getText().toString(), selected, value);
+                    })
+                    .setNegativeButton("Отмена", (d, which) -> {})
+                    .create();
+
+            dialog.show();
+
+
         });
 
 

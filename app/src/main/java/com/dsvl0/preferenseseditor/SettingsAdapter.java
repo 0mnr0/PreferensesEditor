@@ -1,8 +1,8 @@
 package com.dsvl0.preferenseseditor;
 
 import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Looper;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -11,13 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder> {
 
-    private List<SettingItem> settings;
+    private final List<SettingItem> settings;
     boolean isEditTextLoading = false;
     public SettingsAdapter(List<SettingItem> settings) {
         this.settings = settings;
@@ -117,13 +117,16 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull SettingsViewHolder holder, int position) {
         SettingItem item = settings.get(position);
         holder.resetState();
         holder.VarType.setText(item.settingType);
-        Object originalValue; originalValue = item.value;
-
+        holder.MainLayout.setOnLongClickListener(v -> {
+            showDeleteDialog(holder, item, holder.MainLayout.getContext(), item.settingType);
+            return true;
+        });
 
 
         holder.booleanLayout.setVisibility(View.GONE);
@@ -142,9 +145,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 checked = Boolean.parseBoolean((String) item.value);
             }
             holder.materialSwitch.setChecked(checked);
-            holder.materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                item.value = isChecked;
-            });
+            holder.materialSwitch.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
+            holder.materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> item.value = isChecked);
 
         } else if ("string".equalsIgnoreCase(item.settingType)) {
             holder.stringLayout.setVisibility(View.VISIBLE);
@@ -153,6 +155,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             holder.textInputLayout.setHintAnimationEnabled(false);
             insertTextChunked(holder, textValue);
             optimizeEditTextForLargeContent(holder.textInputEditText);
+            holder.textInputEditText.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.textInputEditText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -178,6 +181,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 textValue = item.value.toString();
             }
             holder.textInputEditInt.setText(textValue);
+            holder.textInputEditInt.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.textInputEditInt.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -205,10 +209,10 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             holder.setLayout.setVisibility(View.VISIBLE);
             final HashSet finalValue = (HashSet) item.value;
             LayoutInflater inflater = LayoutInflater.from(holder.setList.getContext());
+            holder.CreateNewSetElement.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.CreateNewSetElement.setOnClickListener(v -> {
                 AddSetToList(inflater, holder, "", item);
             });
-
 
             for (int i = 0; i < finalValue.size(); i++) {
                 AddSetToList(inflater, holder, finalValue.toArray()[i].toString(), item);
@@ -216,7 +220,69 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         }
     }
 
-    @SuppressLint("LongLogTag")
+    private void showDeleteDialog(SettingsViewHolder holder, SettingItem item, Context context, String type) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.setting_action_dialog, null);
+        Spinner spinner = dialogView.findViewById(R.id.changeVarType);
+        Button RemoveKey = dialogView.findViewById(R.id.RemoveKey);
+        Button Cancel = dialogView.findViewById(R.id.CancelVarAction);
+
+
+
+        String[] options = {"String", "Boolean" ,"Int", "Float", "Long", "Set"};
+        int index = 0;
+        for (int i = 0; i < options.length; i++) { if (options[i].equalsIgnoreCase(type)){ index = i; } }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(index);
+
+
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton("Далее", (d, which) -> {
+                    String selected = spinner.getSelectedItem().toString().toLowerCase();
+                    Object value = null;
+                    switch (selected) {
+                        case "string":
+                            value = "";
+                            break;
+                        case "boolean":
+                            value = false;
+                            break;
+                        case "integer":
+                        case "long":
+                        case "float":
+                            value = 0;
+                            break;
+                        case "set":
+                            value = new ArrayList<String>();
+                            break;
+                    }
+                    item.value = value;
+                    item.settingType = selected;
+                    holder.VarType.setText(selected);
+                })
+                .setNegativeButton("Отмена", (d, which) -> {})
+                .create();
+
+        Cancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        RemoveKey.setOnClickListener(v -> {
+            item.value = null;
+            item.settingType = null;
+            item.settingName = null;
+            holder.MainLayout.removeAllViews();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    @SuppressLint({"LongLogTag", "ClickableViewAccessibility"})
     private void AddSetToList(LayoutInflater inflater, SettingsViewHolder holder, String finalValue, SettingItem item) {
         View SetManipulator = inflater.inflate(R.layout.set_manipulator, holder.setList, false);
 
@@ -227,6 +293,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
         final int CurrentElement = holder.SetList.size();
         holder.SetList.add(CurrentElement, editText.getText().toString());
+
+        editText.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -290,10 +358,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         LinearLayout setList;
         Button CreateNewSetElement;
         ArrayList<String> SetList = new ArrayList<>();
+        ConstraintLayout MainLayout;
 
         @SuppressLint("CutPasteId")
         public SettingsViewHolder(@NonNull View itemView) {
             super(itemView);
+            MainLayout = (ConstraintLayout) itemView;
             booleanLayout = itemView.findViewById(R.id.BooleanType);
             materialSwitch = itemView.findViewById(R.id.materialSwitch);
             setList = itemView.findViewById(R.id.setList);
@@ -309,9 +379,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     }
 
 
-    public void CreateNewSetting(String SettingType, String SettingName, Object SettingValue) {
+    public void AddSetting(String SettingName, String SettingType, Object SettingValue) {
         settings.add(new SettingItem(SettingName, SettingType, SettingValue));
-        notifyDataSetChanged();
+        notifyItemInserted(settings.size() - 1);
     }
 
     public List<SettingItem> ExportData() {
