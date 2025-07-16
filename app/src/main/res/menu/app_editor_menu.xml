@@ -23,7 +23,7 @@
     <item
         android:id="@+id/others"
         android:enabled="true"
-        android:icon="@drawable/unknown"
-        android:title="@string/OtherType"
-        android:visible="false" />
+        android:icon="@drawable/code"
+        android:title="Set"
+        android:visible="true" />
 </menu>
