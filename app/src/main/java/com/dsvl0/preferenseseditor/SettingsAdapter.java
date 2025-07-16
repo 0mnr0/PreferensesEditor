@@ -290,6 +290,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 Log.d("CurrentElement (Editing): ", CurrentElement + " | " + s.toString());
                 holder.SetList.set(CurrentElement, s.toString());
                 item.value = holder.SetList;
+                settings.set(settings.indexOf(item), item);
             }
         });
 
@@ -297,6 +298,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             final int CurrentReindexedElement = holder.setList.indexOfChild(SetManipulator) - 1;
             holder.setList.removeView(SetManipulator);
             holder.SetList.remove(CurrentReindexedElement);
+            item.value = holder.SetList;
+            settings.set(settings.indexOf(item), item);
         });
 
         holder.setList.addView(SetManipulator);
@@ -367,6 +370,10 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     }
 
     public List<SettingItem> ExportData() {
+        Log.d("ExportData", "ExportData() called");
+        for (int i = 0; i < settings.size(); i++) {
+            Log.d("ExportData ("+settings.get(i).settingName+")", settings.get(i).value.toString());
+        }
         return settings;
     }
 }

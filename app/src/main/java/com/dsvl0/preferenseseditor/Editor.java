@@ -376,6 +376,10 @@ public class Editor extends AppCompatActivity {
             final List<SettingItem> settings = settingsAdapter.ExportData();
             XmlCreator xmlCreator = new XmlCreator();
             for (SettingItem settingItem : settings) {
+                if (settingItem.value.getClass() == ArrayList.class) {
+                    settingItem.value = new HashSet<String>((ArrayList<String>) settingItem.value);
+                }
+                Log.d("Save("+settingItem.settingName+")", String.valueOf(settingItem.value.getClass()));
                 xmlCreator.add(settingItem.settingName, settingItem.settingType, settingItem.value);
             }
             String FinalXML = xmlCreator.getResult();
