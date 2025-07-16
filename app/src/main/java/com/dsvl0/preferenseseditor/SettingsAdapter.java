@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,12 +33,14 @@ import java.util.List;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder> {
 
-    private final List<SettingItem> settings;
+    private List<SettingItem> settings;
     boolean isEditTextLoading = false;
-
     public SettingsAdapter(List<SettingItem> settings) {
         this.settings = settings;
     }
+
+
+
 
     @NonNull
     @Override
@@ -123,7 +126,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
 
 
-        // Сначала скрываем оба блока
         holder.booleanLayout.setVisibility(View.GONE);
         holder.stringLayout.setVisibility(View.GONE);
         holder.setLayout.setVisibility(View.GONE);
@@ -141,13 +143,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             }
             holder.materialSwitch.setChecked(checked);
             holder.materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                holder.ChangesLayout.setVisibility((isChecked != (Boolean) item.value) ? View.VISIBLE : View.GONE);
+                item.value = isChecked;
             });
 
         } else if ("string".equalsIgnoreCase(item.settingType)) {
             holder.stringLayout.setVisibility(View.VISIBLE);
             holder.textInputLayout.setHint(item.settingName);
-            Log.d("item.settingName", "item.settingName (" + item.settingName + "): "+item.value.toString().length());
             String textValue = item.value != null ? item.value.toString() : "";
             holder.textInputLayout.setHintAnimationEnabled(false);
             insertTextChunked(holder, textValue);
@@ -162,8 +163,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (isEditTextLoading) { return; }
-                    String newValue = s.toString();
-                    holder.ChangesLayout.setVisibility((!newValue.equals(originalValue)) ? View.VISIBLE : View.GONE);
+                    item.value = s.toString();
                 }
             });
 
@@ -188,7 +188,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (isEditTextLoading) { return; }
-                    boolean isChangedFromOriginal = !s.toString().equals(originalValue.toString());
                     switch (item.settingType) {
                         case "int":
                             item.value = Integer.parseInt(s.toString());
@@ -200,30 +199,25 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                             item.value = Long.parseLong(s.toString());
                             break;
                     }
-                    holder.ChangesLayout.setVisibility(isChangedFromOriginal ? View.VISIBLE : View.GONE);
                 }
             });
         } else if ("set".equalsIgnoreCase(item.settingType)) {
             holder.setLayout.setVisibility(View.VISIBLE);
             final HashSet finalValue = (HashSet) item.value;
-
-            Log.d("SetDebugger", String.valueOf(finalValue));
             LayoutInflater inflater = LayoutInflater.from(holder.setList.getContext());
             holder.CreateNewSetElement.setOnClickListener(v -> {
-                holder.HashSize += 1;
-                AddSetToList(inflater, holder, "", holder.HashSize);
+                AddSetToList(inflater, holder, "", item);
             });
 
 
             for (int i = 0; i < finalValue.size(); i++) {
-                AddSetToList(inflater, holder, finalValue.toArray()[i].toString(), i);
-                holder.HashSize = i;
-                Log.d("SetHashSize", String.valueOf(holder.HashSize));
+                AddSetToList(inflater, holder, finalValue.toArray()[i].toString(), item);
             }
         }
     }
 
-    private void AddSetToList(LayoutInflater inflater, SettingsViewHolder holder, String finalValue, int i) {
+    @SuppressLint("LongLogTag")
+    private void AddSetToList(LayoutInflater inflater, SettingsViewHolder holder, String finalValue, SettingItem item) {
         View SetManipulator = inflater.inflate(R.layout.set_manipulator, holder.setList, false);
 
         EditText editText = SetManipulator.findViewById(R.id.editText);
@@ -231,11 +225,28 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         editText.setHint((finalValue.isEmpty()) ? "Новое значение: " : finalValue);
         editText.setText((finalValue.isEmpty()) ? "" : finalValue);
 
+        final int CurrentElement = holder.SetList.size();
+        holder.SetList.add(CurrentElement, editText.getText().toString());
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @SuppressLint("LongLogTag")
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("CurrentElement (Editing): ", CurrentElement + " | " + s.toString());
+                holder.SetList.set(CurrentElement, s.toString());
+                item.value = holder.SetList;
+            }
+        });
+
         DeleteAction.setOnClickListener(v -> {
+            final int CurrentReindexedElement = holder.setList.indexOfChild(SetManipulator) - 1;
             holder.setList.removeView(SetManipulator);
-            holder.HashSize -= 1;
-            //String text = editText.getText().toString();
-            //Toast.makeText(button.getContext(), "Введено: " + text, Toast.LENGTH_SHORT).show();
+            holder.SetList.remove(CurrentReindexedElement);
         });
 
         holder.setList.addView(SetManipulator);
@@ -273,12 +284,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         TextView VarType;
         ConstraintLayout booleanLayout;
         MaterialSwitch materialSwitch;
-        ConstraintLayout stringLayout, intLayout, ChangesLayout, setLayout;
+        ConstraintLayout stringLayout, intLayout, setLayout;
         TextInputLayout textInputLayout, IntOutlinedTextField;
         TextInputEditText textInputEditText, textInputEditInt;
         LinearLayout setList;
         Button CreateNewSetElement;
-        int HashSize = 0;
+        ArrayList<String> SetList = new ArrayList<>();
 
         @SuppressLint("CutPasteId")
         public SettingsViewHolder(@NonNull View itemView) {
@@ -291,11 +302,20 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             textInputEditText = itemView.findViewById(R.id.settings_edit_text);
             IntOutlinedTextField = itemView.findViewById(R.id.IntOutlinedTextField);
             textInputEditInt = itemView.findViewById(R.id.settings_edit_int);
-            ChangesLayout = itemView.findViewById(R.id.ApplyOrDeny);
             setLayout = itemView.findViewById(R.id.SetType);
             VarType = itemView.findViewById(R.id.VarType);
             CreateNewSetElement = itemView.findViewById(R.id.CreateNewSetElement);
         }
+    }
+
+
+    public void CreateNewSetting(String SettingType, String SettingName, Object SettingValue) {
+        settings.add(new SettingItem(SettingName, SettingType, SettingValue));
+        notifyDataSetChanged();
+    }
+
+    public List<SettingItem> ExportData() {
+        return settings;
     }
 }
 

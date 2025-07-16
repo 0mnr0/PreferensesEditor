@@ -56,7 +56,7 @@ public class Editor extends AppCompatActivity {
     TextView EditorAppName, EditorAppPackage;
     private volatile int refreshTaskId = 0;
     List<SharedPrefsParser.Setting> settings;
-    private FloatingActionButton fabMain, SaveFile, EditFullFile;
+    private FloatingActionButton fabMain, SaveFile, EditFullFile, CreateNewSetting;
     private boolean isFabMenuOpen = false;
 
 
@@ -352,6 +352,7 @@ public class Editor extends AppCompatActivity {
 
         fabMain = findViewById(R.id.fabMain);
         EditFullFile = findViewById(R.id.EditFullFile);
+        CreateNewSetting = findViewById(R.id.CreateNewSetting);
         SaveFile = findViewById(R.id.SaveFile);
         fabMain.setOnClickListener(v -> toggleFabMenu(false));
         hideFabMenu(true);
@@ -366,8 +367,15 @@ public class Editor extends AppCompatActivity {
         });
 
         SaveFile.setOnClickListener(v -> {
-            Toast.makeText(this, "Option 2 clicked", Toast.LENGTH_SHORT).show();
+            final List<SettingItem> settings = settingsAdapter.ExportData();
+            for (SettingItem settingItem : settings) {
+                Log.d("ExportData", settingItem.settingName + " | " + settingItem.settingType + " | " + settingItem.value);
+            }
+            //settingsAdapter = new SettingsAdapter(this);
+            //settingsAdapter.saveAll();
         });
+
+
 
     }
 
@@ -384,9 +392,11 @@ public class Editor extends AppCompatActivity {
         }
         if (isFabMenuOpen) {
             EditFullFile.hide();
+            CreateNewSetting.hide();
             SaveFile.hide();
         } else {
             EditFullFile.show();
+            CreateNewSetting.show();
             SaveFile.show();
         }
         isFabMenuOpen = !isFabMenuOpen;

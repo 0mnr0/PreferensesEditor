@@ -194,6 +194,47 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Дополнительная кнопка 1 -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/EditFullFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/edit_document"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/CreateNewSetting"
+        app:layout_constraintEnd_toEndOf="@+id/fabMain"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/CreateNewSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/create_setting"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/SaveFile"
+        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/SaveFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="14dp"
+        android:src="@drawable/save_icon"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fabMain"
+        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
+        tools:visibility="visible" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabMain"
         android:layout_width="wrap_content"
@@ -206,37 +247,6 @@
         android:src="@drawable/utils"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Дополнительная кнопка 1 -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/EditFullFile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="4dp"
-        android:scaleX="0.9"
-        android:scaleY="0.9"
-        android:src="@drawable/edit_document"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/SaveFile"
-        app:layout_constraintEnd_toEndOf="@+id/fabMain"
-        tools:visibility="visible" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/SaveFile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="14dp"
-        android:scaleX="0.9"
-        android:scaleY="0.9"
-        android:src="@drawable/save_icon"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fabMain"
-        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
-        tools:visibility="visible" />
 
     <!-- Дополнительная кнопка 2 -->
 
