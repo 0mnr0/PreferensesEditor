@@ -228,8 +228,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         Button Cancel = dialogView.findViewById(R.id.CancelVarAction);
 
 
-
-        String[] options = {"String", "Boolean" ,"Int", "Float", "Long", "Set"};
+        if (type.equalsIgnoreCase("set") || type.equalsIgnoreCase("boolean")){ return; }
+        String[] options = {"String", "Int", "Float", "Long"};
         int index = 0;
         for (int i = 0; i < options.length; i++) { if (options[i].equalsIgnoreCase(type)){ index = i; } }
 
@@ -244,24 +244,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 .setCancelable(false)
                 .setPositiveButton("Далее", (d, which) -> {
                     String selected = spinner.getSelectedItem().toString().toLowerCase();
-                    Object value = null;
-                    switch (selected) {
-                        case "string":
-                            value = "";
-                            break;
-                        case "boolean":
-                            value = false;
-                            break;
-                        case "integer":
-                        case "long":
-                        case "float":
-                            value = 0;
-                            break;
-                        case "set":
-                            value = new ArrayList<String>();
-                            break;
-                    }
-                    item.value = value;
                     item.settingType = selected;
                     holder.VarType.setText(selected);
                 })
