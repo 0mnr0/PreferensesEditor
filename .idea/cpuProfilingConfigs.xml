@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CpuProfilerConfigsState">
+    <option name="taskConfigs">
+      <list>
+        <CpuProfilerConfig>
+          <option name="name" value="Callstack Sample" />
+          <option name="technology" value="SAMPLED_NATIVE" />
+        </CpuProfilerConfig>
+        <CpuProfilerConfig>
+          <option name="bufferSizeMb" value="32" />
+          <option name="name" value="Java/Kotlin Method Trace" />
+          <option name="technology" value="INSTRUMENTED_JAVA" />
+        </CpuProfilerConfig>
+        <CpuProfilerConfig>
+          <option name="bufferSizeMb" value="32" />
+        </CpuProfilerConfig>
+        <CpuProfilerConfig>
+          <option name="name" value="Native Allocations" />
+          <option name="samplingRateBytes" value="4048" />
+          <option name="technology" value="NATIVE_ALLOCATIONS" />
+        </CpuProfilerConfig>
+        <CpuProfilerConfig>
+          <option name="bufferSizeMb" value="4" />
+          <option name="name" value="System Trace" />
+          <option name="technology" value="SYSTEM_TRACE" />
+        </CpuProfilerConfig>
+      </list>
+    </option>
+  </component>
+</project>

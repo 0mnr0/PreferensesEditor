@@ -38,12 +38,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class Editor extends AppCompatActivity {
     final float GUIDELINE_PERCENT_OPENED = 0.25f;
@@ -394,7 +396,7 @@ public class Editor extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(this);
             View dialogView = inflater.inflate(R.layout.dialog_with_spinner, null);
             Spinner spinner = dialogView.findViewById(R.id.dialogSpinner);
-            EditText settingName = dialogView.findViewById(R.id.NewSettingName);
+            TextInputEditText SetVarName = dialogView.findViewById(R.id.SetVarName);
 
             String[] options = {"String", "Boolean" ,"Int", "Float", "Long", "Set"};
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, options);
@@ -403,6 +405,7 @@ public class Editor extends AppCompatActivity {
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setView(dialogView)
+                    .setTitle("Variable Creation")
                     .setCancelable(false)
                     .setPositiveButton("Далее", (dialog, which) -> {
                         String selected = spinner.getSelectedItem().toString().toLowerCase();
@@ -423,7 +426,8 @@ public class Editor extends AppCompatActivity {
                                 value = new HashSet<String>();
                                 break;
                         }
-                        settingsAdapter.AddSetting(settingName.getText().toString(), selected, value);
+                        String varName = Objects.requireNonNull(SetVarName.getText()).toString();
+                        settingsAdapter.AddSetting(varName, selected, value);
                     })
                     .setNegativeButton("Отмена", (dialog, which) -> {});
 

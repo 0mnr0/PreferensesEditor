@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -227,7 +228,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         View dialogView = inflater.inflate(R.layout.setting_action_dialog, null);
         Spinner spinner = dialogView.findViewById(R.id.changeVarType);
         Button RemoveKey = dialogView.findViewById(R.id.RemoveKey);
-        Button Cancel = dialogView.findViewById(R.id.CancelVarAction);
 
 
         String[] options = {"String", "Int", "Float", "Long"};
@@ -243,22 +243,20 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         spinner.setAdapter(adapter);
         spinner.setSelection(index);
 
-
-
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setView(dialogView)
-                .setCancelable(false)
-                .setPositiveButton("Далее", (d, which) -> {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setView(dialogView)
+                .setTitle("Выберите тип переменной")
+                .setCancelable(true)
+                .setPositiveButton("Далее", (dialog, which) -> {
                     String selected = spinner.getSelectedItem().toString().toLowerCase();
                     item.settingType = selected;
                     holder.VarType.setText(selected);
                 })
-                .setNegativeButton("Отмена", (d, which) -> {})
-                .create();
+                .setNegativeButton("Отмена", (dialog, which) -> {});
 
-        Cancel.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        
         RemoveKey.setOnClickListener(v -> {
             item.value = null;
             item.settingType = null;
