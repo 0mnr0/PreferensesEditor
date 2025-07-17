@@ -556,7 +556,7 @@ public class Editor extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (!SecondMenuOpened) {
+        if (SecondMenuOpened) {
             WasSomethingFocused = false;
             clearFocusFromAll(main);
             if (WasSomethingFocused) {
