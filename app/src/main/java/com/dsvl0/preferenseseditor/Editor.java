@@ -10,6 +10,7 @@ import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,6 +69,7 @@ public class Editor extends AppCompatActivity {
     List<SharedPrefsParser.Setting> settings;
     private FloatingActionButton fabMain, SaveFile, EditFullFile, CreateNewSetting;
     private boolean isFabMenuOpen = false;
+    private int mTotalScrolled = 0;
 
 
 
@@ -294,6 +296,12 @@ public class Editor extends AppCompatActivity {
             ShowFilePreferences();
         });
         UpdateSharedPrefs();
+
+        new Handler().postDelayed(() -> {
+            WorkingList.scrollBy(0, mTotalScrolled);
+            mTotalScrolled = 0;
+        }, 100);
+
     }
 
     @SuppressLint({"MissingInflatedId"})
@@ -463,6 +471,17 @@ public class Editor extends AppCompatActivity {
                 return insets;
             });
         }
+
+        WorkingList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!SecondMenuOpened) {
+                mTotalScrolled += dy;
+                }
+            }
+        });
+
     }
 
 
@@ -530,6 +549,7 @@ public class Editor extends AppCompatActivity {
             }
         }
     }
+
 
 
 
