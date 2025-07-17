@@ -67,7 +67,8 @@ public class FullFileEditor extends AppCompatActivity {
             }
             return false;
         });
-
+        ImageView imageView4 = findViewById(R.id.imageView4);
+        imageView4.setOnClickListener(v -> onBackPressed());
 
 
 
