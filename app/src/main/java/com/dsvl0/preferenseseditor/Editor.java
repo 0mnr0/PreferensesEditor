@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -73,6 +75,7 @@ public class Editor extends AppCompatActivity {
     private boolean isFabMenuOpen = false;
     private int mTotalScrolled = 0;
 
+    private ActivityResultLauncher<Intent> launcher;
 
 
 
@@ -157,9 +160,10 @@ public class Editor extends AppCompatActivity {
 
 
     public void ShowFilePreferences() {
+        ShowLoadingIndicator(true);
+        settingsAdapter = null;
         adapter.clearFiles();
         SwitchTopElement(true);
-        ShowLoadingIndicator(true);
 
         new Thread(() -> {
             final String content = SharedPrefsReader.readSharedPrefs(packageName, fileName); // Returning shared_preferences.xml file content like a String
@@ -167,7 +171,6 @@ public class Editor extends AppCompatActivity {
 
             try {
                 parsedSettings = SharedPrefsParser.parseSharedPrefsXml(content);
-                Log.d("parsedSettings:", parsedSettings.toString());
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     Toast.makeText(this, "Failed to decode file :/", Toast.LENGTH_SHORT).show();
@@ -180,7 +183,7 @@ public class Editor extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 settings = parsedSettings;
-                RefreshInAppSettings(); // Запустить обновление с новыми данными
+                RefreshInAppSettings();
             });
         }).start();
     }
@@ -380,6 +383,20 @@ public class Editor extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.alls);
 
 
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            boolean resultValue = data.getBooleanExtra("fileChanged", false);
+                            if (resultValue) {
+                                ShowFilePreferences();
+                            }
+                            Toast.makeText(this, "Получено: " + resultValue, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
 
         EditFullFile.hide();
@@ -388,7 +405,7 @@ public class Editor extends AppCompatActivity {
             intent.putExtra("packageName", packageName);
             intent.putExtra("appName", appName);
             intent.putExtra("workingFile", fileName);
-            startActivity(intent);
+            launcher.launch(intent);
         });
 
         SaveFile.setOnClickListener(v -> {

@@ -92,6 +92,9 @@ public class FullFileEditor extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(FullFileEditor.this, "Сохранено!", Toast.LENGTH_SHORT).show();
                     LoadIndicator(false);
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("fileChanged", true);
+                    setResult(RESULT_OK, resultIntent);
                     finish();
                 });
             }).start();
@@ -108,4 +111,5 @@ public class FullFileEditor extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
 }
