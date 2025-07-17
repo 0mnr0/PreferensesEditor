@@ -18,4 +18,5 @@
     <string name="TypeSelectorText">Тип:</string>
     <string name="RemoveSetting">Удалить ключ</string>
     <string name="CreatenewSetting">Создать новую настройку</string>
+    <string name="NotAvaiableFor__TYPE__">Недоступно для</string>
 </resources>

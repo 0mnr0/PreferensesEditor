@@ -24,4 +24,5 @@
     <string name="TypeSelectorText">Type:</string>
     <string name="RemoveSetting">Remove this key</string>
     <string name="CreatenewSetting">Create new setting</string>
+    <string name="NotAvaiableFor__TYPE__">Not avaiable for</string>
 </resources>

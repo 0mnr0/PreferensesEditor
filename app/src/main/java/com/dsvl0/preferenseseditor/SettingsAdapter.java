@@ -229,7 +229,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
         String[] options = {"String", "Int", "Float", "Long"};
         if (type.equalsIgnoreCase("set") || type.equalsIgnoreCase("boolean")){
-            options = new String[]{"Not Available for <" + type + ">"};
+            options = new String[]{context.getString(R.string.NotAvaiableFor__TYPE__) + " <" + type + ">"};
             spinner.setEnabled(false);
             spinner.setClickable(false);
         }
