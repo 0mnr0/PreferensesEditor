@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         final int length = fullText.length();
         holder.isTextLoading = true;
         holder.textInputEditText.setEnabled(false);
+        holder.textInputEditText.setMovementMethod(new ScrollingMovementMethod());
+        holder.textInputEditText.setHorizontallyScrolling(true);
 
         // Оптимизация для EditText
         optimizeEditTextForLargeContent(holder.textInputEditText);
@@ -157,6 +160,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             holder.textInputLayout.setHintAnimationEnabled(false);
             insertTextChunked(holder, textValue);
             optimizeEditTextForLargeContent(holder.textInputEditText);
+            holder.textInputEditText.setMovementMethod(new ScrollingMovementMethod());
+            holder.textInputEditText.setHorizontallyScrolling(true);
             holder.textInputEditText.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.textInputEditText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -183,6 +188,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 textValue = item.value.toString();
             }
             holder.textInputEditInt.setText(textValue);
+            holder.textInputEditInt.setMovementMethod(new ScrollingMovementMethod());
+            holder.textInputEditInt.setHorizontallyScrolling(true);
             holder.textInputEditInt.setOnTouchListener((v, e) -> {holder.MainLayout.onTouchEvent(e); return false;});
             holder.textInputEditInt.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -309,7 +316,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     private void optimizeEditTextForLargeContent(EditText editText) {
         editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         editText.setHorizontallyScrolling(true);
-        editText.setMovementMethod(null);
         editText.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
         editText.setScrollContainer(true);
     }
