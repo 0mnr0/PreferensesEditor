@@ -1,5 +1,7 @@
 package com.dsvl0.preferenseseditor;
 
+import android.annotation.SuppressLint;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -8,9 +10,8 @@ public class SharedPrefsReader {
 
     public static String readSharedPrefs(String packageName, String fileName) {
         try {
-            String path = "/data/data/" + packageName + "/shared_prefs/" + fileName;
+            @SuppressLint("SdCardPath") String path = "/data/data/" + packageName + "/shared_prefs/" + fileName;
 
-            // Чтение файла напрямую через `su` и `cat`
             Process process = Runtime.getRuntime().exec(new String[]{"su", "-c", "cat \"" + path + "\""});
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -24,15 +25,14 @@ public class SharedPrefsReader {
             reader.close();
             process.waitFor();
 
-            // Проверка: если пусто — возможно файл не прочитался
             if (result.length() == 0) {
-                return "Файл пуст или не удалось прочитать. Возможно, root-запрос отклонён.";
+                return "No data returned. File may be empty or root access is not granted.";
             }
 
             return result.toString();
 
         } catch (Exception e) {
-            return "Ошибка: " + e.getMessage();
+            return "Error: " + e.getMessage();
         }
     }
 

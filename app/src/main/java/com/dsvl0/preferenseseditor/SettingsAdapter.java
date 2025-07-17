@@ -374,10 +374,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     }
 
     public List<SettingItem> ExportData() {
-        Log.d("ExportData", "ExportData() called");
-        for (int i = 0; i < settings.size(); i++) {
-            Log.d("ExportData ("+settings.get(i).settingName+")", settings.get(i).value.toString());
-        }
         return settings;
     }
 }

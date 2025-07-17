@@ -13,7 +13,7 @@
         android:layout_marginBottom="10dp"
         android:padding="10dp"
         android:paddingBottom="10dp"
-        android:text="Выберите имя и тип:"
+        android:text="@string/ChooseNameAndType"
         android:textColor="#CCCCCC" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -21,12 +21,13 @@
         style="?attr/textInputFilledStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Имя переменной">
+        android:hint="@string/VariableName">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/SetVarName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/DeafultValue" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:background="@drawable/menu_bg"
+        android:minHeight="48dp"
         android:padding="4dp" />
 
 </LinearLayout>

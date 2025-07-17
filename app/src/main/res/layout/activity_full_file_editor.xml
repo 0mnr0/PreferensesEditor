@@ -48,35 +48,36 @@
             android:id="@+id/FileWorkingOn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:padding="4dp"
             android:singleLine="true"
-            android:text="File Name"
             android:textColor="@color/Material80"
             android:textSize="20sp"
             app:layout_constraintEnd_toStartOf="@+id/SaveAction"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
-            app:layout_constraintTop_toTopOf="@+id/imageView4" />
+            app:layout_constraintTop_toTopOf="@+id/imageView4"
+            tools:text="AppName" />
 
         <TextView
             android:id="@+id/AppFullEditName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:singleLine="true"
-            android:text="AppName"
             android:textColor="@color/Material70"
             app:layout_constraintEnd_toStartOf="@+id/SaveAction"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
-            app:layout_constraintTop_toBottomOf="@+id/FileWorkingOn" />
+            app:layout_constraintTop_toBottomOf="@+id/FileWorkingOn"
+            tools:text="FileName" />
 
         <ImageView
             android:id="@+id/SaveAction"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
+            android:contentDescription="@string/SaveSettings"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView4"
             app:layout_constraintEnd_toEndOf="parent"

@@ -178,13 +178,13 @@
             android:ellipsize="end"
             android:padding="6dp"
             android:singleLine="true"
-            android:text="AppName"
             android:textColor="@color/Material90"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="AppName" />
 
         <TextView
             android:id="@+id/EditorAppPackage"
@@ -192,14 +192,15 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingLeft="6dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingBottom="4dp"
             android:singleLine="true"
-            android:text="TextView"
             android:textColor="@color/Material80"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/EditorAppName" />
+            app:layout_constraintTop_toBottomOf="@+id/EditorAppName"
+            tools:text="AppPackage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -213,7 +214,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
         android:src="@drawable/edit_document"
-        android:text="Edit As File"
+        android:text="@string/EditAsFile"
         android:visibility="invisible"
         app:icon="@drawable/edit_document"
         app:layout_constraintBottom_toTopOf="@+id/CreateNewSetting"
@@ -226,7 +227,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
-        android:text="Create"
+        android:text="@string/CreateSetting"
         android:visibility="invisible"
         app:icon="@drawable/create_setting"
         app:layout_constraintBottom_toTopOf="@+id/SaveFile"
@@ -239,7 +240,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="14dp"
-        android:text="Save"
+        android:text="@string/SaveSettings"
         android:visibility="invisible"
         app:icon="@drawable/save_icon"
         app:layout_constraintBottom_toTopOf="@+id/fabMain"
@@ -257,6 +258,18 @@
         android:src="@drawable/utils"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/NoFilesWasFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.8"
+        android:text="@string/NothingFound"
+        android:textColor="@color/Material70"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Дополнительная кнопка 2 -->
 

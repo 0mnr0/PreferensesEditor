@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -173,7 +174,7 @@ public class Editor extends AppCompatActivity {
                 parsedSettings = SharedPrefsParser.parseSharedPrefsXml(content);
             } catch (Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Failed to decode file :/", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.PreferenceDecodeFailed, Toast.LENGTH_SHORT).show();
                     Log.w("DecodeFileFailed", e);
                     SwitchTopElement(false);
                     ShowLoadingIndicator(false);
@@ -282,7 +283,8 @@ public class Editor extends AppCompatActivity {
 
     public void UpdateSharedPrefs() {
         sharedPrefsFiles = getSharedPrefsFileNames();
-        if (sharedPrefsFiles.isEmpty()) { Toast.makeText(this, "Root отсутствует или приложение ничего не сохранило", Toast.LENGTH_LONG).show();}
+        findViewById(R.id.NoFilesWasFound).setVisibility(sharedPrefsFiles.isEmpty() ? View.VISIBLE : View.GONE);
+        if (sharedPrefsFiles.isEmpty()) { ShowLoadingIndicator(false); return; }
 
         for (int i = 0; i < sharedPrefsFiles.size(); i++) {
             adapter.addFile(sharedPrefsFiles.get(i));
@@ -309,7 +311,7 @@ public class Editor extends AppCompatActivity {
 
     }
 
-    @SuppressLint({"MissingInflatedId"})
+    @SuppressLint({"MissingInflatedId", "SdCardPath"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DynamicColors.applyToActivityIfAvailable(this);
@@ -389,11 +391,9 @@ public class Editor extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            boolean resultValue = data.getBooleanExtra("fileChanged", false);
-                            if (resultValue) {
+                            if (data.getBooleanExtra("fileChanged", false)) {
                                 ShowFilePreferences();
                             }
-                            Toast.makeText(this, "Получено: " + resultValue, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -419,7 +419,7 @@ public class Editor extends AppCompatActivity {
             }
             String FinalXML = xmlCreator.getResult();
             RootFile.save("/data/data/" + packageName + "/shared_prefs/" + fileName, FinalXML);
-            Toast.makeText(this, "File saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ChangesWasSaved, Toast.LENGTH_SHORT).show();
         });
 
         CreateNewSetting.setOnClickListener(v -> {
@@ -435,9 +435,9 @@ public class Editor extends AppCompatActivity {
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setView(dialogView)
-                    .setTitle("Variable Creation")
+                    .setTitle(R.string.CreateNewOption)
                     .setCancelable(false)
-                    .setPositiveButton("Далее", (dialog, which) -> {
+                    .setPositiveButton(R.string.NextStep, (dialog, which) -> {
                         String selected = spinner.getSelectedItem().toString().toLowerCase();
                         Object value = null;
                         switch (selected) {
@@ -459,7 +459,7 @@ public class Editor extends AppCompatActivity {
                         String varName = Objects.requireNonNull(SetVarName.getText()).toString();
                         settingsAdapter.AddSetting(varName, selected, value);
                     })
-                    .setNegativeButton("Отмена", (dialog, which) -> {});
+                    .setNegativeButton(R.string.Cancel, (dialog, which) -> {});
 
             AlertDialog dialog = builder.create();
             dialog.show();
@@ -491,7 +491,7 @@ public class Editor extends AppCompatActivity {
 
         WorkingList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (!SecondMenuOpened) {
                 mTotalScrolled += dy;

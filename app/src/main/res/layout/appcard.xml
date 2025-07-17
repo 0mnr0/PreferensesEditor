@@ -41,12 +41,12 @@
             android:ellipsize="end"
             android:fontFamily="@font/rubik"
             android:singleLine="true"
-            android:text="AppName"
             android:textColor="@color/MaterialAdditional70"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="AppName" />
 
         <TextView
             android:id="@+id/packageName"
@@ -54,11 +54,11 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="pkgName"
             android:textColor="@color/MaterialAdditional90"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/AppName" />
+            app:layout_constraintTop_toBottomOf="@+id/AppName"
+            tools:text="appPackage" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

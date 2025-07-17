@@ -90,7 +90,7 @@ public class FullFileEditor extends AppCompatActivity {
             new Thread(() -> {
                 RootFile.save("/data/data/" + packageName + "/shared_prefs/" + fileName, EditTextFile.getText().toString());
                 runOnUiThread(() -> {
-                    Toast.makeText(FullFileEditor.this, "Сохранено!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FullFileEditor.this, R.string.ChangesWasSaved, Toast.LENGTH_SHORT).show();
                     LoadIndicator(false);
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("fileChanged", true);

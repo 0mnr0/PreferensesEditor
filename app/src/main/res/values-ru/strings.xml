@@ -2,4 +2,20 @@
 <resources>
     <string name="AppMainActivityTitle">Список приложений</string>
     <string name="TooLargeContent">Может потребоваться время чтобы отобразить все настройки. В этом файле крайне много символов для отображения.</string>
+    <string name="EditAsFile">Открыть как файл</string>
+    <string name="CreateSetting">Создать</string>
+    <string name="SaveSettings">Сохранить</string>
+    <string name="NextStep">Далее</string>
+    <string name="Cancel">Отмена</string>
+    <string name="NothingFound">Ничего не найдено</string>
+    <string name="PreferenceDecodeFailed">Не удалось прочитать файл</string>
+    <string name="AppsSearch">Найти</string>
+    <string name="ChangesWasSaved">Изменения были сохранены</string>
+    <string name="CreateNewOption">Создать новую настройку</string>
+    <string name="ChooseNameAndType">Выберите имя и тип:</string>
+    <string name="VariableName">Имя переменной</string>
+    <string name="NewValue">Новое значение</string>
+    <string name="TypeSelectorText">Тип:</string>
+    <string name="RemoveSetting">Удалить ключ</string>
+    <string name="CreatenewSetting">Создать новую настройку</string>
 </resources>

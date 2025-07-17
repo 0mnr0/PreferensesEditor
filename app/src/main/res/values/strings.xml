@@ -4,6 +4,24 @@
     <string name="BoolType" translatable="false">Boolean</string>
     <string name="StringType" translatable="false">String</string>
     <string name="IntType" translatable="false">Numerical</string>
-    <string name="OtherType" translatable="false">Other Types</string>
+    <string name="SetType" translatable="false">Set</string>
     <string name="TooLargeContent">It may take a while to display all the settings. There are a lot of characters to display in this file.</string>
+    <string name="AllType" translatable="false">Any Type</string>
+    <string name="EditAsFile">Edit As File</string>
+    <string name="CreateSetting">Create</string>
+    <string name="SaveSettings">Save</string>
+    <string name="NextStep">Next</string>
+    <string name="Cancel">Cancel</string>
+    <string name="NothingFound">No files was found</string>
+    <string name="PreferenceDecodeFailed">File failed to decode</string>
+    <string name="AppsSearch">Find</string>
+    <string name="ChangesWasSaved">The changes have been saved</string>
+    <string name="CreateNewOption">Create New Setting</string>
+    <string name="ChooseNameAndType">Choose a name and type:</string>
+    <string name="DeafultValue" translatable="false">DeafultValue</string>
+    <string name="VariableName">Variable name</string>
+    <string name="NewValue">New value</string>
+    <string name="TypeSelectorText">Type:</string>
+    <string name="RemoveSetting">Remove this key</string>
+    <string name="CreatenewSetting">Create new setting</string>
 </resources>

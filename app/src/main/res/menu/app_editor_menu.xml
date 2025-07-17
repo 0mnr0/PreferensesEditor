@@ -4,7 +4,7 @@
         android:id="@+id/alls"
         android:enabled="true"
         android:icon="@drawable/all"
-        android:title="All Types" />
+        android:title="@string/AllType" />
     <item
         android:id="@+id/bools"
         android:enabled="true"
@@ -24,6 +24,5 @@
         android:id="@+id/others"
         android:enabled="true"
         android:icon="@drawable/code"
-        android:title="Set"
-        android:visible="true" />
+        android:title="@string/SetType" />
 </menu>

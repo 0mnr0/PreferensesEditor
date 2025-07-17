@@ -30,7 +30,6 @@ public class XmlFileAdapter extends RecyclerView.Adapter<XmlFileAdapter.FileView
         notifyItemInserted(fileList.size() - 1);
     }
 
-    // Очистка всех файлов
     public void clearFiles() {
         fileList.clear();
         notifyDataSetChanged();

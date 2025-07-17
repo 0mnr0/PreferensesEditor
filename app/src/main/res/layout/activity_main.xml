@@ -40,7 +40,7 @@
             android:iconifiedByDefault="false"
             android:inputType="text|textNoSuggestions"
             android:queryBackground="@null"
-            android:queryHint="Поиск..."
+            android:queryHint="@string/AppsSearch"
             android:soundEffectsEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
