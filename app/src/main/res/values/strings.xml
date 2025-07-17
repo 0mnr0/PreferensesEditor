@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">SharedPrefs Edtior</string>
+    <string name="app_name" translatable="false">SharedPrefs Editor</string>
     <string name="AppMainActivityTitle">App List</string>
     <string name="BoolType" translatable="false">Boolean</string>
     <string name="StringType" translatable="false">String</string>
