@@ -401,6 +401,7 @@ public class Editor extends AppCompatActivity {
 
         EditFullFile.hide();
         EditFullFile.setOnClickListener(v -> {
+            isFabMenuOpen = true; toggleFabMenu(false);
             Intent intent = new Intent(this, FullFileEditor.class);
             intent.putExtra("packageName", packageName);
             intent.putExtra("appName", appName);
@@ -420,9 +421,12 @@ public class Editor extends AppCompatActivity {
             String FinalXML = xmlCreator.getResult();
             RootFile.save("/data/data/" + packageName + "/shared_prefs/" + fileName, FinalXML);
             Toast.makeText(this, R.string.ChangesWasSaved, Toast.LENGTH_SHORT).show();
+            isFabMenuOpen = true; toggleFabMenu(false);
         });
 
         CreateNewSetting.setOnClickListener(v -> {
+
+            isFabMenuOpen = true; toggleFabMenu(false);
             LayoutInflater inflater = LayoutInflater.from(this);
             View dialogView = inflater.inflate(R.layout.dialog_with_spinner, null);
             Spinner spinner = dialogView.findViewById(R.id.dialogSpinner);
