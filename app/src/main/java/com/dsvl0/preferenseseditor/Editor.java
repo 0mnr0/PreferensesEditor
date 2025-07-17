@@ -38,6 +38,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -67,7 +68,8 @@ public class Editor extends AppCompatActivity {
     TextView EditorAppName, EditorAppPackage;
     private volatile int refreshTaskId = 0;
     List<SharedPrefsParser.Setting> settings;
-    private FloatingActionButton fabMain, SaveFile, EditFullFile, CreateNewSetting;
+    private FloatingActionButton fabMain;
+    private ExtendedFloatingActionButton SaveFile, EditFullFile, CreateNewSetting;
     private boolean isFabMenuOpen = false;
     private int mTotalScrolled = 0;
 
@@ -340,9 +342,9 @@ public class Editor extends AppCompatActivity {
         EditorAppName = findViewById(R.id.EditorAppName); EditorAppName.setText(appName);
         EditorAppPackage = findViewById(R.id.EditorAppPackage); EditorAppPackage.setText(packageName);
         fabMain = findViewById(R.id.fabMain);
-        EditFullFile = findViewById(R.id.EditFullFile);
-        CreateNewSetting = findViewById(R.id.CreateNewSetting);
-        SaveFile = findViewById(R.id.SaveFile);
+        EditFullFile = findViewById(R.id.EditFullFile); EditFullFile.hide();
+        CreateNewSetting = findViewById(R.id.CreateNewSetting); CreateNewSetting.hide();
+        SaveFile = findViewById(R.id.SaveFile); SaveFile.hide();
         fabMain.setOnClickListener(v -> toggleFabMenu(false));
         hideFabMenu(true);
 
@@ -396,13 +398,11 @@ public class Editor extends AppCompatActivity {
                 if (settingItem.value.getClass() == ArrayList.class) {
                     settingItem.value = new HashSet<>((ArrayList<String>) settingItem.value);
                 }
-                Log.d("Save("+settingItem.settingName+")", String.valueOf(settingItem.value.getClass()));
                 xmlCreator.add(settingItem.settingName, settingItem.settingType, settingItem.value);
             }
             String FinalXML = xmlCreator.getResult();
-
-            Log.v("FinalXML", FinalXML);
             RootFile.save("/data/data/" + packageName + "/shared_prefs/" + fileName, FinalXML);
+            Toast.makeText(this, "File saved!", Toast.LENGTH_SHORT).show();
         });
 
         CreateNewSetting.setOnClickListener(v -> {

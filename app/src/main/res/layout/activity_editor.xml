@@ -205,7 +205,7 @@
 
     <!-- Дополнительная кнопка 1 -->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/EditFullFile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -213,36 +213,37 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
         android:src="@drawable/edit_document"
-        android:visibility="gone"
+        android:text="Edit As File"
+        android:visibility="invisible"
+        app:icon="@drawable/edit_document"
         app:layout_constraintBottom_toTopOf="@+id/CreateNewSetting"
-        app:layout_constraintEnd_toEndOf="@+id/fabMain"
-        tools:visibility="visible" />
+        app:layout_constraintEnd_toEndOf="@+id/fabMain" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/CreateNewSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
-        android:src="@drawable/create_setting"
-        android:visibility="gone"
+        android:text="Create"
+        android:visibility="invisible"
+        app:icon="@drawable/create_setting"
         app:layout_constraintBottom_toTopOf="@+id/SaveFile"
-        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
-        tools:visibility="visible" />
+        app:layout_constraintEnd_toEndOf="@+id/EditFullFile" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/SaveFile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="14dp"
-        android:src="@drawable/save_icon"
-        android:visibility="gone"
+        android:text="Save"
+        android:visibility="invisible"
+        app:icon="@drawable/save_icon"
         app:layout_constraintBottom_toTopOf="@+id/fabMain"
-        app:layout_constraintEnd_toEndOf="@+id/EditFullFile"
-        tools:visibility="visible" />
+        app:layout_constraintEnd_toEndOf="@+id/EditFullFile" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabMain"
