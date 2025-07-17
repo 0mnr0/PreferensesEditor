@@ -194,17 +194,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (isEditTextLoading) { return; }
-                    switch (item.settingType) {
-                        case "int":
-                            item.value = Integer.parseInt(s.toString());
-                            break;
-                        case "float":
-                            item.value = Float.parseFloat(s.toString());
-                            break;
-                        case "long":
-                            item.value = Long.parseLong(s.toString());
-                            break;
-                    }
+                    item.value = s.toString();
                 }
             });
         } else if ("set".equalsIgnoreCase(item.settingType)) {
@@ -256,7 +246,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.show();
-        
+
         RemoveKey.setOnClickListener(v -> {
             item.value = null;
             item.settingType = null;
