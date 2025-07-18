@@ -83,23 +83,33 @@ public class Editor extends AppCompatActivity {
     public List<String> getSharedPrefsFileNames() {
         List<String> sharedPrefsFiles = new ArrayList<>();
         String sharedPrefsPath = "/data/data/" + packageName + "/shared_prefs/";
-
+        Process process = null;
+        BufferedReader reader = null;
         try {
-            Process process = Runtime.getRuntime().exec(new String[] {"su", "-c", "ls " + sharedPrefsPath});
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
+            process = Runtime.getRuntime().exec(new String[]{"su", "-c", "ls " + sharedPrefsPath});
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            while ((line = reader.readLine()) != null) {
-                if (line.endsWith(".xml")) {
-                    sharedPrefsFiles.add(line);
+            Process finalProcess = process;
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                    finalProcess.destroy();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
+            }).start();
 
-            reader.close();
+            // Чтение вывода
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.endsWith(".xml")) sharedPrefsFiles.add(line);
+            }
             process.waitFor();
+
 
         } catch (Exception e) {
             e.printStackTrace();
+            return sharedPrefsFiles;
         }
 
         return sharedPrefsFiles;
