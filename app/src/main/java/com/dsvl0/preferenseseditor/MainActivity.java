@@ -189,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("packageName", appCard.getPackageName());
                 intent.putExtra("appName", appCard.getName());
                 try {
-                    intent.putExtra("appIcon", appCard.getIcon());
+                    Bitmap smallIcon = Bitmap.createScaledBitmap(appCard.getIcon(), 200, 200, true);
+                    intent.putExtra("appIcon", smallIcon);
                     startActivity(intent);
                 } catch (Exception ignored) {
                     intent.removeExtra("appIcon");
