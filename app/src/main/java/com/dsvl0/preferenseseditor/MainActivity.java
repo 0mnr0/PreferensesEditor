@@ -285,10 +285,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onResult(String result) {
                     try {
                         String currentVersion = MainActivity.this.getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionName;
-
-
-                        Log.d("VersionChecker", "Current: " + currentVersion + ", New: " + result);
-                        Log.d("VersionChecker", result + ".equalsIgnoreCase(" + currentVersion + "): " + result.equalsIgnoreCase(currentVersion));
                         if (result.equalsIgnoreCase(currentVersion)) return;
 
                         NewAppUpdate.setVisibility(View.VISIBLE);
@@ -305,7 +301,8 @@ public class MainActivity extends AppCompatActivity {
                                 NewAppUpdate.animate().alpha(0f).setDuration(200).start();
                                 new Handler().postDelayed(() -> {
                                     Glide.with(MainActivity.this).load(avatarTime[0] ? "https://avatars.githubusercontent.com/u/99125366" : R.drawable.app_update).circleCrop().into(NewAppUpdate);
-                                    final int padding = (avatarTime[0] ? 0 : 40);
+                                    final int paddingInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                                    final int padding = (avatarTime[0] ? 0 : paddingInDp);
                                     NewAppUpdate.setPadding(padding, padding, padding, padding);
                                     new Handler().postDelayed(() -> NewAppUpdate.animate().alpha(1f).setDuration(200).start(), 200);
                                     avatarTime[0] = !avatarTime[0];
