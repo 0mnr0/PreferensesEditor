@@ -15,6 +15,7 @@
         android:layout_weight="1"
         android:hint="@string/NewValue"
         android:inputType="text|textNoSuggestions"
+        android:textColor="@color/Material80"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/deleteAction"
         app:layout_constraintStart_toStartOf="parent"

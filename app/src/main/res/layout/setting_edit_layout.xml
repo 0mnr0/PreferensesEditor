@@ -48,6 +48,7 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:checked="true"
+                android:textColor="@color/Material80"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -93,7 +94,8 @@
                     android:overScrollMode="always"
                     android:scrollbars="horizontal|vertical"
                     android:scrollHorizontally="true"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/Material80" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -129,7 +131,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:scrollHorizontally="true" />
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/Material80" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
