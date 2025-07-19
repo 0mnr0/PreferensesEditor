@@ -423,7 +423,7 @@ public class Editor extends AppCompatActivity {
             final List<SettingItem> settings = settingsAdapter.ExportData();
             XmlCreator xmlCreator = new XmlCreator();
             for (SettingItem settingItem : settings) {
-                if (settingItem.value.getClass() == ArrayList.class) {
+                if (settingItem.value != null && settingItem.value.getClass() == ArrayList.class) {
                     settingItem.value = new HashSet<>((ArrayList<String>) settingItem.value);
                 }
                 xmlCreator.add(settingItem.settingName, settingItem.settingType, settingItem.value);
