@@ -181,7 +181,9 @@
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/set_preference_button"
                     android:minHeight="1dp"
-                    android:text="@string/CreatenewSetting" />
+                    android:text="@string/CreatenewSetting"
+                    app:icon="@drawable/add_box"
+                    app:iconGravity="textStart" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
