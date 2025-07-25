@@ -524,9 +524,8 @@ public class Editor extends AppCompatActivity {
         final int movementBy = (opened ? 0 : -bottomNav.getHeight());
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomNav.getLayoutParams();
         int startMargin = params.bottomMargin;
-        int endMargin = movementBy;
 
-        ValueAnimator animator = ValueAnimator.ofInt(startMargin, endMargin);
+        ValueAnimator animator = ValueAnimator.ofInt(startMargin, movementBy);
         animator.setDuration(duration);
         animator.addUpdateListener(animation -> {
             params.bottomMargin = (int) animation.getAnimatedValue();
