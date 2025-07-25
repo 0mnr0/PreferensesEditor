@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -52,6 +54,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -226,7 +229,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    private int dpToPx(int dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().getDisplayMetrics());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -256,6 +262,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        appList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
+                                       @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                int position = parent.getChildAdapterPosition(view);
+                if (position == Objects.requireNonNull(parent.getAdapter()).getItemCount() - 1) {
+                    outRect.bottom = dpToPx(10);
+                }
+            }
+        });
+
+
         ImageView NewAppUpdate = findViewById(R.id.NewAppUpdate);
         NewAppUpdate.setOnClickListener(v -> {
             try{
