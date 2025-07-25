@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +64,8 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
     @Override
     public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.appcard, parent, false);
+        view.setAlpha(0f);
+        view.animate().alpha(1f).setDuration(200).start();
         return new AppViewHolder(view);
     }
 
@@ -84,15 +84,10 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
         notifyItemInserted(appList.size() - 1);
     }
 
-    public void addApps(List<SystemAppInfo> apps) {
-        int start = appList.size();
-        appList.addAll(apps);
-        notifyItemRangeInserted(start, apps.size());
-    }
-
     public void clearApps() {
+        final int size = appList.size();
         appList.clear();
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, size);
     }
 
     public interface OnAppClickListener {
