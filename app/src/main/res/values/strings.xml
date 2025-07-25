@@ -25,4 +25,7 @@
     <string name="RemoveSetting">Remove this key</string>
     <string name="CreatenewSetting">Create new setting</string>
     <string name="NotAvaiableFor__TYPE__">Not avaiable for</string>
+    <string name="ShowSystemApps">Show system apps</string>
+    <string name="ShowInstalledApps">Show installed apps</string>
+    <string name="AppFilter">Application filter</string>
 </resources>

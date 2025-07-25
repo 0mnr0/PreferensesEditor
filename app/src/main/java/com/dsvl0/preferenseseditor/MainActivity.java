@@ -19,14 +19,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -40,6 +43,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     boolean isRefreshing = false;
     SearchView searchView;
     String PackageFilter = "";
-
     AppCardAdapter adapter = new AppCardAdapter(this);
+    int searchFilterType = 3;
 
 
 
@@ -203,6 +207,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void OnSwipeReload() {
+        isRefreshing = true;
+        adapter.clearApps();
+        ShowLoadingProgress(true);
+        executor.execute(() -> {
+            List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, searchFilterType);
+            runOnUiThread(() -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                apps = fetchedApps;
+                BuildAppList();
+                ShowLoadingProgress(false);
+                isRefreshing = false;
+            }, 100));
+        });
+    }
 
 
     @Override
@@ -232,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         ShowLoadingProgress(true);
         new Handler().postDelayed(() -> executor.execute(() -> {
             isRefreshing = true;
-            List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, 3);
+            List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, searchFilterType);
             runOnUiThread(() -> {
                 apps = fetchedApps;
                 BuildAppList();
@@ -259,19 +277,8 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             if (isRefreshing) {swipeRefreshLayout.setRefreshing(false); return;}
-            isRefreshing = true;
-            adapter.clearApps();
-            ShowLoadingProgress(true);
             swipeRefreshLayout.setRefreshing(false);
-            executor.execute(() -> {
-                List<SystemAppInfo> fetchedApps = getSystemAppsWithRoot(this, 3);
-                runOnUiThread(() -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    apps = fetchedApps;
-                    BuildAppList();
-                    ShowLoadingProgress(false);
-                    isRefreshing = false;
-                }, 100));
-            });
+            OnSwipeReload();
         });
 
 
@@ -299,13 +306,17 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 NewAppUpdate.animate().alpha(0f).setDuration(200).start();
                                 new Handler().postDelayed(() -> {
-                                    Glide.with(MainActivity.this).load(avatarTime[0] ? "https://avatars.githubusercontent.com/u/99125366" : R.drawable.app_update).circleCrop().into(NewAppUpdate);
-                                    final int paddingInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-                                    final int padding = (avatarTime[0] ? 0 : paddingInDp);
-                                    NewAppUpdate.setPadding(padding, padding, padding, padding);
-                                    new Handler().postDelayed(() -> NewAppUpdate.animate().alpha(1f).setDuration(200).start(), 200);
-                                    avatarTime[0] = !avatarTime[0];
-                                    handler.postDelayed(this, 3200);
+                                    try {
+                                        Glide.with(MainActivity.this).load(avatarTime[0] ? "https://avatars.githubusercontent.com/u/99125366" : R.drawable.app_update).circleCrop().into(NewAppUpdate);
+                                        final int paddingInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                                        final int padding = (avatarTime[0] ? 0 : paddingInDp);
+                                        NewAppUpdate.setPadding(padding, padding, padding, padding);
+                                        new Handler().postDelayed(() -> NewAppUpdate.animate().alpha(1f).setDuration(200).start(), 200);
+                                        avatarTime[0] = !avatarTime[0];
+                                        handler.postDelayed(this, 3200);
+                                    } catch (Exception e) {
+                                        Log.d("VersionChecker", e.toString());
+                                    }
                                 }, 200);
                             }
                         };
@@ -327,6 +338,39 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(MainActivity.this, "Failed to execute app version check :(", Toast.LENGTH_SHORT).show();
         }
+
+        ImageView FilterImage = findViewById(R.id.FilterImage);
+        FilterImage.setOnClickListener(v -> {
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View dialogView = inflater.inflate(R.layout.dialog_filter, null);
+            CheckBox SystemApps, UserApps;
+            SystemApps = dialogView.findViewById(R.id.SystemApps);
+            UserApps = dialogView.findViewById(R.id.UserApps);
+            SystemApps.setChecked(searchFilterType != 3);
+            UserApps.setChecked(searchFilterType != 2);
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setView(dialogView)
+                    .setTitle(R.string.AppFilter)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.NextStep, (dialog, which) -> {
+                        int startFilterType = searchFilterType;
+                        if (SystemApps.isChecked() && UserApps.isChecked()) {
+                            searchFilterType = 1;
+                        } else if (SystemApps.isChecked() && !UserApps.isChecked()) {
+                            searchFilterType = 2;
+                        } else {
+                            searchFilterType = 3;
+                        }
+                        if (startFilterType != searchFilterType) {
+                            OnSwipeReload();
+                        }
+                    })
+                    .setNegativeButton(R.string.Cancel, (dialog, which) -> {});
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
 
     }
 

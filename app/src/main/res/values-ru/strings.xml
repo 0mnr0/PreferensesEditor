@@ -19,4 +19,7 @@
     <string name="RemoveSetting">Удалить ключ</string>
     <string name="CreatenewSetting">Создать новую настройку</string>
     <string name="NotAvaiableFor__TYPE__">Недоступно для</string>
+    <string name="ShowSystemApps">Показывать системные приложения</string>
+    <string name="ShowInstalledApps">Показывать установленные приложения</string>
+    <string name="AppFilter">Фильтр приложений</string>
 </resources>
