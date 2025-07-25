@@ -52,14 +52,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class Editor extends AppCompatActivity {
+    SwipeRefreshLayout settingsRefreshLayout, xmlRefreshLayout;
     final float GUIDELINE_PERCENT_OPENED = 0.25f;
     final float GUIDELINE_PERCENT_CLOSED = 0.025f;
     ArrayList<String> searchType = new ArrayList<>();
     String packageName, appName;
     Bitmap appIcon;
     List<String> sharedPrefsFiles = new ArrayList<>();
-    RecyclerView WorkingList;
-    XmlFileAdapter adapter;
+    RecyclerView SettingsList, XmlFilesList;
+    XmlFileAdapter XmlAdapter;
     TextView PopupText;
     ConstraintLayout PopupLayout, main;
     SettingsAdapter settingsAdapter;
@@ -132,7 +133,6 @@ public class Editor extends AppCompatActivity {
             long symbolsCounter = 0;
             List<SettingItem> data = new ArrayList<>();
 
-            // Фильтрация и подсчет в фоне
             for (SharedPrefsParser.Setting setting : settings) {
                 if (searchType.contains(setting.type) ||
                         searchType.contains("*") ||
@@ -153,7 +153,6 @@ public class Editor extends AppCompatActivity {
                     return;
                 }
 
-                // Обновление UI
                 if (finalSymbolsCounter > 3000) {
                     PopupLayout.setVisibility(View.VISIBLE);
                     PopupText.setText(getString(R.string.TooLargeContent) + " (" + finalSymbolsCounter + ")");
@@ -161,8 +160,10 @@ public class Editor extends AppCompatActivity {
                     PopupLayout.setVisibility(View.GONE);
                 }
 
+                Log.d("finalData", String.valueOf(finalData.size())); // не может быть == 0
+                //SettingsList.setAdapter(null);
                 settingsAdapter = new SettingsAdapter(finalData);
-                WorkingList.setAdapter(settingsAdapter);
+                SettingsList.setAdapter(settingsAdapter);
                 ShowLoadingIndicator(false);
             });
         }).start();
@@ -172,7 +173,6 @@ public class Editor extends AppCompatActivity {
     public void ShowFilePreferences() {
         ShowLoadingIndicator(true);
         settingsAdapter = null;
-        adapter.clearFiles();
         SwitchTopElement(true);
 
         new Thread(() -> {
@@ -210,8 +210,10 @@ public class Editor extends AppCompatActivity {
         ShowLoadingIndicator(blurred);
         toggleFabMenu(true);
         hideFabMenu(!blurred);
+        settingsRefreshLayout.setVisibility(blurred ? View.VISIBLE : View.GONE);
+        xmlRefreshLayout.setVisibility(blurred ? View.GONE : View.VISIBLE);
         if (blurred) {
-            WorkingList.setAdapter(null);
+            SettingsList.setAdapter(null);
             EditorAppPackage.setText(fileName);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 blurImage.setRenderEffect(null);
@@ -296,7 +298,7 @@ public class Editor extends AppCompatActivity {
         if (sharedPrefsFiles.isEmpty()) { ShowLoadingIndicator(false); return; }
 
         for (int i = 0; i < sharedPrefsFiles.size(); i++) {
-            adapter.addFile(sharedPrefsFiles.get(i));
+            XmlAdapter.addFile(sharedPrefsFiles.get(i));
         }
 
         ShowLoadingIndicator(false);
@@ -304,20 +306,14 @@ public class Editor extends AppCompatActivity {
 
 
     public void CreateXmlAdapter() {
-        adapter = new XmlFileAdapter();
-        WorkingList.setLayoutManager(new LinearLayoutManager(this));
-        WorkingList.setAdapter(adapter);
-        adapter.setOnItemClickListener(clickedText -> {
+        XmlAdapter = new XmlFileAdapter();
+        XmlFilesList.setLayoutManager(new LinearLayoutManager(this));
+        XmlFilesList.setAdapter(XmlAdapter);
+        XmlAdapter.setOnItemClickListener(clickedText -> {
             fileName = clickedText;
             ShowFilePreferences();
         });
         UpdateSharedPrefs();
-
-        new Handler().postDelayed(() -> {
-            WorkingList.scrollBy(0, mTotalScrolled);
-            mTotalScrolled = 0;
-        }, 100);
-
     }
 
     @SuppressLint({"MissingInflatedId", "SdCardPath"})
@@ -333,7 +329,9 @@ public class Editor extends AppCompatActivity {
             return insets;
         }); ShowLoadingIndicator(true);
         main = findViewById(R.id.main);
-        WorkingList = findViewById(R.id.SettingsList);
+        SettingsList = findViewById(R.id.SettingsList);
+        SettingsList.setLayoutManager(new LinearLayoutManager(this));
+        XmlFilesList = findViewById(R.id.XmlFilesList);
         PopupLayout = findViewById(R.id.PopupLayout);
         PopupText = findViewById(R.id.PopupText);
         findViewById(R.id.ClosePopupImage).setOnClickListener(v -> PopupLayout.setVisibility(View.GONE));
@@ -361,6 +359,31 @@ public class Editor extends AppCompatActivity {
         SaveFile = findViewById(R.id.SaveFile); SaveFile.hide();
         fabMain.setOnClickListener(v -> toggleFabMenu(false));
         hideFabMenu(true);
+        //every 1 sec
+
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d("VisibleTracks", "XmlFilesList - " + xmlRefreshLayout.getVisibility());
+                Log.d("VisibleTracks", "SettingsList - " + settingsRefreshLayout.getVisibility()+"\n\n");
+                handler.postDelayed(this, 1000);
+            }
+        };
+        handler.post(runnable);
+
+        settingsRefreshLayout = findViewById(R.id.listRefresh); settingsRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
+        settingsRefreshLayout.setOnRefreshListener(() -> {
+            ShowFilePreferences();
+            settingsRefreshLayout.setRefreshing(false);
+        });
+
+        xmlRefreshLayout = findViewById(R.id.xmlRefresh); xmlRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
+        xmlRefreshLayout.setOnRefreshListener(() -> {
+            PopupLayout.setVisibility(View.GONE);
+            CreateXmlAdapter();
+            xmlRefreshLayout.setRefreshing(false);
+        });
 
 
         CreateXmlAdapter();
@@ -481,19 +504,6 @@ public class Editor extends AppCompatActivity {
 
         });
 
-        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.listRefresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (SecondMenuOpened) {
-                ShowFilePreferences();
-            } else {
-                PopupLayout.setVisibility(View.GONE);
-                CreateXmlAdapter();
-            }
-            swipeRefreshLayout.setRefreshing(false);
-        });
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
@@ -502,15 +512,6 @@ public class Editor extends AppCompatActivity {
             });
         }
 
-        WorkingList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!SecondMenuOpened) {
-                mTotalScrolled += dy;
-                }
-            }
-        });
 
     }
 
