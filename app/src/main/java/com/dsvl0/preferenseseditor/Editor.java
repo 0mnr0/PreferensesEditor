@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -83,8 +82,8 @@ public class Editor extends AppCompatActivity {
     public List<String> getSharedPrefsFileNames() {
         List<String> sharedPrefsFiles = new ArrayList<>();
         String sharedPrefsPath = "/data/data/" + packageName + "/shared_prefs/";
-        Process process = null;
-        BufferedReader reader = null;
+        Process process;
+        BufferedReader reader;
         try {
             process = Runtime.getRuntime().exec(new String[]{"su", "-c", "ls " + sharedPrefsPath});
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -568,40 +567,22 @@ public class Editor extends AppCompatActivity {
     }
 
 
-    boolean WasSomethingFocused = false;
-    private void clearFocusFromAll(ViewGroup parent) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                clearFocusFromAll((ViewGroup) child);
-            } else {
-                if (child.hasFocus()) {WasSomethingFocused = true;}
-                child.clearFocus();
-            }
-        }
-    }
-
-
-
-
     @Override
     public void onBackPressed() {
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
         if (SecondMenuOpened) {
-            WasSomethingFocused = false;
-            clearFocusFromAll(main);
-            if (WasSomethingFocused) {
-                return;
+            View Element = getCurrentFocus();
+            if (Element != null && !rootView.isFocused()) {
+                rootView.setFocusableInTouchMode(true);
+                rootView.requestFocus();
+            } else {
+                SecondMenuOpened = false;
+                SwitchTopElement(false);
+                PopupLayout.setVisibility(View.GONE);
             }
-        }
-
-        if (SecondMenuOpened) {
-            SecondMenuOpened = false;
-            SwitchTopElement(false);
-            PopupLayout.setVisibility(View.GONE);
             return;
         }
-
 
 
         super.onBackPressed();

@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_weight="1"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
         android:hint="@string/NewValue"
         android:inputType="text|textNoSuggestions"
         android:textColor="@color/Material90"
