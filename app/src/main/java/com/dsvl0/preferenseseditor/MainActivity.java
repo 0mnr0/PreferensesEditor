@@ -396,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
                             searchFilterType = 3;
                         }
                         if (startFilterType != searchFilterType) {
+                            apps = new ArrayList<>();
                             OnSwipeReload();
                         }
                     })
