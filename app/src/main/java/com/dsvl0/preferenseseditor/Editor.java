@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -212,6 +213,7 @@ public class Editor extends AppCompatActivity {
         hideFabMenu(!blurred);
         settingsRefreshLayout.setVisibility(blurred ? View.VISIBLE : View.GONE);
         xmlRefreshLayout.setVisibility(blurred ? View.GONE : View.VISIBLE);
+        SwitchBottomNavVisibility(blurred ? View.VISIBLE : View.GONE, 300);
         if (blurred) {
             SettingsList.setAdapter(null);
             EditorAppPackage.setText(fileName);
@@ -243,9 +245,7 @@ public class Editor extends AppCompatActivity {
                     .setDuration(400)
                     .start();
 
-
             animator = ValueAnimator.ofFloat(GUIDELINE_PERCENT_OPENED, GUIDELINE_PERCENT_CLOSED); animator.setDuration(400);
-            bottomNav.setVisibility(View.VISIBLE);
         } else {
 
             CreateXmlAdapter();
@@ -273,7 +273,6 @@ public class Editor extends AppCompatActivity {
                     .scaleY(1f)
                     .setDuration(400)
                     .start();
-            bottomNav.setVisibility(View.GONE);
             EditorAppPackage.setText(packageName);
             animator = ValueAnimator.ofFloat(GUIDELINE_PERCENT_CLOSED, GUIDELINE_PERCENT_OPENED); animator.setDuration(400);
 
@@ -360,17 +359,6 @@ public class Editor extends AppCompatActivity {
         fabMain.setOnClickListener(v -> toggleFabMenu(false));
         hideFabMenu(true);
         //every 1 sec
-
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d("VisibleTracks", "XmlFilesList - " + xmlRefreshLayout.getVisibility());
-                Log.d("VisibleTracks", "SettingsList - " + settingsRefreshLayout.getVisibility()+"\n\n");
-                handler.postDelayed(this, 1000);
-            }
-        };
-        handler.post(runnable);
 
         settingsRefreshLayout = findViewById(R.id.listRefresh); settingsRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
         settingsRefreshLayout.setOnRefreshListener(() -> {
@@ -499,18 +487,19 @@ public class Editor extends AppCompatActivity {
 
             AlertDialog dialog = builder.create();
             dialog.show();
-
-
-
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-                KeyBoardActions(isKeyboardVisible);
-                return insets;
-            });
-        }
+
+        bottomNav.post(() -> {
+            bottomNav.setTranslationY(bottomNav.getHeight());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                    boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+                    KeyBoardActions(isKeyboardVisible);
+                    return insets;
+                });
+            }
+        });
 
 
     }
@@ -522,10 +511,30 @@ public class Editor extends AppCompatActivity {
             toggleFabMenu(false);
         }
         if (SecondMenuOpened) {
-            bottomNav.setVisibility((isKeyBoardOpened) ? View.GONE : View.VISIBLE);
-        } else {bottomNav.setVisibility(View.GONE);}
+            SwitchBottomNavVisibility(isKeyBoardOpened ? View.GONE : View.VISIBLE, 200);
+        } else {
+            SwitchBottomNavVisibility(View.GONE, 200);
+        }
     }
 
+    public void SwitchBottomNavVisibility(int mode, int duration){
+        final boolean opened = mode == 0;
+        bottomNav.animate().translationY(opened ? 5 : bottomNav.getHeight()).setDuration(duration);
+
+        final int movementBy = (opened ? 0 : -bottomNav.getHeight());
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomNav.getLayoutParams();
+        int startMargin = params.bottomMargin;
+        int endMargin = movementBy;
+
+        ValueAnimator animator = ValueAnimator.ofInt(startMargin, endMargin);
+        animator.setDuration(duration);
+        animator.addUpdateListener(animation -> {
+            params.bottomMargin = (int) animation.getAnimatedValue();
+            bottomNav.setLayoutParams(params);
+        });
+        animator.start();
+
+    }
 
 
 

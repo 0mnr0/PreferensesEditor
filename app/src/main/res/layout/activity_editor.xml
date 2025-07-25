@@ -81,12 +81,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingBottom="0dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/app_editor_menu"
-        tools:visibility="visible" />
+        app:menu="@menu/app_editor_menu" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/listRefresh"
