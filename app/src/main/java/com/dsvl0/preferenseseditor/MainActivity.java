@@ -1,5 +1,7 @@
 package com.dsvl0.preferenseseditor;
 
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -29,6 +31,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -223,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DynamicColors.applyToActivityIfAvailable(this);
@@ -234,9 +238,20 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
-        appList = findViewById(R.id.appList);
+
+
         MainContent = findViewById(R.id.ConstraintLayout);
         searchView = findViewById(R.id.search_view);
+        appList = findViewById(R.id.appList);
+        appList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == SCROLL_STATE_DRAGGING) {
+                    searchView.clearFocus();
+                }
+            }
+        });
         ImageView NewAppUpdate = findViewById(R.id.NewAppUpdate);
         NewAppUpdate.setOnClickListener(v -> {
             try{
