@@ -28,4 +28,5 @@
     <string name="ShowSystemApps">Show system apps</string>
     <string name="ShowInstalledApps">Show installed apps</string>
     <string name="AppFilter">Application filter</string>
+    <string name="NewUpdateFound">New Update Found</string>
 </resources>

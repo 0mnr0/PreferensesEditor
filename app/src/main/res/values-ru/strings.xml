@@ -22,4 +22,5 @@
     <string name="ShowSystemApps">Показывать системные приложения</string>
     <string name="ShowInstalledApps">Показывать установленные приложения</string>
     <string name="AppFilter">Фильтр приложений</string>
+    <string name="NewUpdateFound">Доступно новое обнолвение</string>
 </resources>
