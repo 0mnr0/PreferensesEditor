@@ -24,6 +24,9 @@
     </style>
 
 
+    <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/Material60</item>
+    </style>
 
 
 </resources>

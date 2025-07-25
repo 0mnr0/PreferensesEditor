@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -242,6 +243,9 @@ public class MainActivity extends AppCompatActivity {
 
         MainContent = findViewById(R.id.ConstraintLayout);
         searchView = findViewById(R.id.search_view);
+
+
+
         appList = findViewById(R.id.appList);
         appList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -307,12 +311,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         String currentVersion = MainActivity.this.getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0).versionName;
                         if (result.equalsIgnoreCase(currentVersion)) return;
-
                         NewAppUpdate.setVisibility(View.VISIBLE);
-                        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-                        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) searchView.getLayoutParams();
-                        params.setMargins(0, 0, margin, 0);
-                        searchView.setLayoutParams(params);
 
                         final boolean[] avatarTime = {false};
                         final Handler handler = new Handler();

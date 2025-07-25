@@ -106,8 +106,11 @@ public class FullFileEditor extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (EditTextFile.hasFocus()) {
-            EditTextFile.clearFocus();
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        View Element = getCurrentFocus();
+        if (Element != null && !rootView.isFocused()) {
+            rootView.setFocusableInTouchMode(true);
+            rootView.requestFocus();
             return;
         }
         super.onBackPressed();
