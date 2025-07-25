@@ -55,12 +55,9 @@ public class AppCardAdapter extends RecyclerView.Adapter<AppCardAdapter.AppViewH
             packageName.setText(appCard.getPackageName());
             appIcon.setImageBitmap(appCard.getIcon());
 
-            RequestOptions options = new RequestOptions()
-                    .transform(new RoundedCorners(20));
-
             Glide.with(context)
                     .load(appCard.getIcon())
-                    .apply(options)
+                    .circleCrop()
                     .into(appIcon);
         }
     }
