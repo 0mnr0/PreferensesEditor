@@ -488,7 +488,7 @@ public class Editor extends AppCompatActivity {
 
 
         bottomNav.post(() -> {
-            bottomNav.setTranslationY(bottomNav.getHeight());
+            SwitchBottomNavVisibility(View.GONE, 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                     boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
