@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -337,14 +338,19 @@ public class Editor extends AppCompatActivity {
         appName = getIntent().getStringExtra("appName");
 
 
-        appImg = findViewById(R.id.appImg); blurImage = findViewById(R.id.blurAnimation);
-        if (getIntent().getParcelableExtra("appIcon") != null) {
-            appIcon = getIntent().getParcelableExtra("appIcon");
-            appImg.setImageBitmap(appIcon);
-            blurImage.setImageBitmap(appIcon);
-        } else {
-            appImg.setVisibility(View.GONE);
-            blurImage.setVisibility(View.GONE);
+        try {
+            appImg = findViewById(R.id.appImg);
+            blurImage = findViewById(R.id.blurAnimation);
+            if (getIntent().getParcelableExtra("appIcon") != null) {
+                appIcon = getIntent().getParcelableExtra("appIcon");
+                Glide.with(this).load(appIcon).circleCrop().into(appImg);
+                blurImage.setImageBitmap(appIcon);
+            } else {
+                appImg.setVisibility(View.GONE);
+                blurImage.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "App Icon is corrupted", Toast.LENGTH_SHORT).show();
         }
 
         EditorAppName = findViewById(R.id.EditorAppName); EditorAppName.setText(appName);
