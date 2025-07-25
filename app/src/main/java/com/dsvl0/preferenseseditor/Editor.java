@@ -10,7 +10,6 @@ import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -75,7 +73,6 @@ public class Editor extends AppCompatActivity {
     private FloatingActionButton fabMain;
     private ExtendedFloatingActionButton SaveFile, EditFullFile, CreateNewSetting;
     private boolean isFabMenuOpen = false;
-    private int mTotalScrolled = 0;
 
     private ActivityResultLauncher<Intent> launcher;
 
