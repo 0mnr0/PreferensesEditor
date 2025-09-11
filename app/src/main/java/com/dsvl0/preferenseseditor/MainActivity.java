@@ -26,9 +26,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -137,8 +135,10 @@ public class MainActivity extends AppCompatActivity {
         appList.setLayoutManager(new LinearLayoutManager(this));
 
         for (SystemAppInfo app : apps) {
-            if (!app.getName().contains(PackageFilter)) {
-                continue;
+            if (!PackageFilter.isEmpty()) {
+                if (!app.getName().toLowerCase().contains(PackageFilter) && !app.getPackageName().toLowerCase().contains(PackageFilter.replaceAll(" ",""))) {
+                    continue;
+                }
             }
             adapter.addApp(app);
         }
@@ -229,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private int dpToPx(int dp) {
+    private int dpToPx() {
         return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().getDisplayMetrics());
+                TypedValue.COMPLEX_UNIT_DIP, 10, Resources.getSystem().getDisplayMetrics());
     }
 
     @Override
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                                        @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 int position = parent.getChildAdapterPosition(view);
                 if (position == Objects.requireNonNull(parent.getAdapter()).getItemCount() - 1) {
-                    outRect.bottom = dpToPx(10);
+                    outRect.bottom = dpToPx();
                 }
             }
         });
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                PackageFilter = newText;
+                PackageFilter = newText.toLowerCase();
                 BuildAppList();
                 return false;
             }
