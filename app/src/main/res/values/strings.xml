@@ -29,4 +29,7 @@
     <string name="ShowInstalledApps">Show installed apps</string>
     <string name="AppFilter">Application filter</string>
     <string name="NewUpdateFound">New Update Found</string>
+    <string name="DoNotSave">Do not save</string>
+    <string name="UnstashedChanges">You have changed and not saved some settings, do you want to save them?</string>
+    <string name="UnstashedChangesTitle">Save the settings?</string>
 </resources>

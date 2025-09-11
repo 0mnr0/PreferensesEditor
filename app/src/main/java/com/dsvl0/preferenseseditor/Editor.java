@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.RenderEffect;
@@ -578,6 +579,12 @@ public class Editor extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    public void ShowFirstScreen(){
+        SecondMenuOpened = false;
+        SwitchTopElement(false);
+        PopupLayout.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -585,16 +592,40 @@ public class Editor extends AppCompatActivity {
 
         if (SecondMenuOpened) {
             View Element = getCurrentFocus();
-            if (Element != null && !rootView.isFocused()) {
+
+            final boolean isSomethingChanged = settingsAdapter != null && settingsAdapter.isSomethingChanged();
+            if (isSomethingChanged) {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.UnstashedChangesTitle)
+                        .setMessage(getString(R.string.UnstashedChanges))
+                        .setNeutralButton(getString(R.string.Cancel), (dialog, which) -> {
+                            dialog.cancel();
+                        })
+                        .setNegativeButton(getString(R.string.DoNotSave), (dialog, which) -> {
+                            dialog.cancel();
+                            settingsAdapter.resetToOriginalSettings();
+                            ShowFirstScreen();
+                        })
+                        .setPositiveButton(getString(R.string.SaveSettings), (dialog, which) -> {
+                            dialog.cancel();
+                            SaveFile.callOnClick();
+                            settingsAdapter.resetToOriginalSettings();
+                            ShowFirstScreen();
+                        })
+                        .show();
+
+            }
+
+            if (Element != null && !rootView.isFocused() || isSomethingChanged) {
                 rootView.setFocusableInTouchMode(true);
                 rootView.requestFocus();
             } else {
-                SecondMenuOpened = false;
-                SwitchTopElement(false);
-                PopupLayout.setVisibility(View.GONE);
+                ShowFirstScreen();
             }
             return;
         }
+
+
 
 
         super.onBackPressed();

@@ -37,10 +37,59 @@ import java.util.List;
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder> {
 
     private final List<SettingItem> settings;
+    private final List<SettingItem> originalSettings;
     boolean isEditTextLoading = false;
     public SettingsAdapter(List<SettingItem> settings) {
         this.settings = settings;
+        this.originalSettings = new ArrayList<>();
+        for (SettingItem item : settings) {
+            this.originalSettings.add(new SettingItem(item.settingName, item.settingType, cloneValue(item.value)));
+        }
     }
+
+    @SuppressWarnings("unchecked")
+    private Object cloneValue(Object value) {
+        if (value instanceof HashSet) {
+            return new HashSet<>((HashSet<String>) value);
+        } else if (value instanceof ArrayList) {
+            return new ArrayList<>((ArrayList<String>) value);
+        } else {
+            return value; // строки, числа, boolean — immutable
+        }
+    }
+
+
+    public boolean isSomethingChanged() {
+        if (settings.size() != originalSettings.size()) return true;
+
+        for (int i = 0; i < settings.size(); i++) {
+            SettingItem current = settings.get(i);
+            SettingItem original = originalSettings.get(i);
+
+            if (!equalsNullable(current.settingName, original.settingName)) return true;
+            if (!equalsNullable(current.settingType, original.settingType)) return true;
+            if (!equalsNullable(current.value, original.value)) return true;
+        }
+        return false;
+    }
+
+    private boolean equalsNullable(Object a, Object b) {
+        return (a == null && b == null) || (a != null && a.equals(b));
+    }
+
+    public void resetToOriginalSettings() {
+        originalSettings.clear();
+        for (SettingItem item : settings) {
+            originalSettings.add(new SettingItem(
+                    item.settingName,
+                    item.settingType,
+                    cloneValue(item.value)
+            ));
+        }
+    }
+
+
+
 
 
 

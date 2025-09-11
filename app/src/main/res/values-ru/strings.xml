@@ -23,4 +23,7 @@
     <string name="ShowInstalledApps">Показывать установленные приложения</string>
     <string name="AppFilter">Фильтр приложений</string>
     <string name="NewUpdateFound">Доступно новое обнолвение</string>
+    <string name="DoNotSave">Не сохранять</string>
+    <string name="UnstashedChanges">Вы изменили и не сохранили некоторые настройки, хотите ли вы их сохранить?</string>
+    <string name="UnstashedChangesTitle">Сохранить настройки?</string>
 </resources>
