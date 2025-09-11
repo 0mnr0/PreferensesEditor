@@ -26,4 +26,5 @@
     <string name="DoNotSave">Не сохранять</string>
     <string name="UnstashedChanges">Вы изменили и не сохранили некоторые настройки, хотите ли вы их сохранить?</string>
     <string name="UnstashedChangesTitle">Сохранить настройки?</string>
+    <string name="PLSSelectSomething">Пожалуйста, выберите хотя бы один вариант. В данный момент используется режим по умолчанию</string>
 </resources>

@@ -392,6 +392,9 @@ public class MainActivity extends AppCompatActivity {
                             searchFilterType = 1;
                         } else if (SystemApps.isChecked() && !UserApps.isChecked()) {
                             searchFilterType = 2;
+                        } else if (!SystemApps.isChecked() && !UserApps.isChecked()){
+                            Toast.makeText(this, getString(R.string.PLSSelectSomething), Toast.LENGTH_SHORT).show();
+                            searchFilterType = 3;
                         } else {
                             searchFilterType = 3;
                         }

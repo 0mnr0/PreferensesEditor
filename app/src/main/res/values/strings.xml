@@ -32,4 +32,5 @@
     <string name="DoNotSave">Do not save</string>
     <string name="UnstashedChanges">You have changed and not saved some settings, do you want to save them?</string>
     <string name="UnstashedChangesTitle">Save the settings?</string>
+    <string name="PLSSelectSomething">Please select at least one option. Currently running Default Mode</string>
 </resources>
