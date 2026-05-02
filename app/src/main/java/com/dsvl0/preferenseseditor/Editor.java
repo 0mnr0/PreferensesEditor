@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.RenderEffect;
@@ -62,8 +61,7 @@ public class Editor extends AppCompatActivity {
     List<String> sharedPrefsFiles = new ArrayList<>();
     RecyclerView SettingsList, XmlFilesList;
     XmlFileAdapter XmlAdapter;
-    TextView PopupText;
-    ConstraintLayout PopupLayout, main;
+    ConstraintLayout main;
     SettingsAdapter settingsAdapter;
     String fileName = null;
     BottomNavigationView bottomNav;
@@ -153,12 +151,7 @@ public class Editor extends AppCompatActivity {
                     return;
                 }
 
-                if (finalSymbolsCounter > 3000) {
-                    PopupLayout.setVisibility(View.VISIBLE);
-                    PopupText.setText(getString(R.string.TooLargeContent) + " (" + finalSymbolsCounter + ")");
-                } else {
-                    PopupLayout.setVisibility(View.GONE);
-                }
+
 
                 Log.d("finalData", String.valueOf(finalData.size())); // не может быть == 0
                 //SettingsList.setAdapter(null);
@@ -330,9 +323,6 @@ public class Editor extends AppCompatActivity {
         SettingsList = findViewById(R.id.SettingsList);
         SettingsList.setLayoutManager(new LinearLayoutManager(this));
         XmlFilesList = findViewById(R.id.XmlFilesList);
-        PopupLayout = findViewById(R.id.PopupLayout);
-        PopupText = findViewById(R.id.PopupText);
-        findViewById(R.id.ClosePopupImage).setOnClickListener(v -> PopupLayout.setVisibility(View.GONE));
 
         //Get Extra from this activity
         packageName = getIntent().getStringExtra("packageName");
@@ -372,7 +362,6 @@ public class Editor extends AppCompatActivity {
 
         xmlRefreshLayout = findViewById(R.id.xmlRefresh); xmlRefreshLayout.setColorSchemeResources(R.color.Material20, R.color.MaterialAdditional20);
         xmlRefreshLayout.setOnRefreshListener(() -> {
-            PopupLayout.setVisibility(View.GONE);
             CreateXmlAdapter();
             xmlRefreshLayout.setRefreshing(false);
         });
@@ -582,7 +571,6 @@ public class Editor extends AppCompatActivity {
     public void ShowFirstScreen(){
         SecondMenuOpened = false;
         SwitchTopElement(false);
-        PopupLayout.setVisibility(View.GONE);
     }
 
 
