@@ -45,7 +45,10 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/SettingsList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="90dp" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
